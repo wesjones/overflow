@@ -1,73 +1,166 @@
-# React + TypeScript + Vite
+# Overflow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive overflow component for React that automatically moves toolbar items into a dropdown menu as the container shrinks. Items transition through three states: **visible**, **min** (icon-only), and **hidden** (moved to menu).
 
-Currently, two official plugins are available:
+[**Live Storybook Demo**](https://wesjones.github.io/overflow/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- Items collapse into a menu as the container narrows
+- Optional **min state** — items shrink to icon-only before hiding
+- **Compact mode** — items collapse one at a time instead of all at once
+- **Reverse mode** — items collapse from the left instead of the right
+- **Menu-only items** — items that always live in the menu (e.g. Help, About)
+- Ships with **MUI** and **Radix UI** implementations, or bring your own
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Install
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev          # Vite dev server
+pnpm storybook    # Storybook on port 6006
+pnpm build        # TypeScript check + Vite build
+pnpm lint         # ESLint
 ```
+
+## Usage
+
+Each implementation follows the same pattern: an `Overflow` container holds `OverflowItem` children and an `OverflowMenu`. Items with a matching `menuid` in both the menu and the toolbar are linked — when the toolbar item overflows, its menu counterpart appears.
+
+### Radix UI
+
+```tsx
+import { RxOverflow, RxOverflowItem, RxOverflowMenu } from './components/RxOverflow';
+
+<RxOverflow style={{ gap: 8 }}>
+  <RxOverflowMenu opener={<button>...</button>}>
+    <RxOverflowItem menuid="format">
+      <button>Format</button>
+    </RxOverflowItem>
+    <RxOverflowItem menuid="filter">
+      <button>Filters</button>
+    </RxOverflowItem>
+  </RxOverflowMenu>
+
+  <RxOverflowItem menuid="format">
+    <button>Format</button>
+  </RxOverflowItem>
+  <RxOverflowItem menuid="filter">
+    <button>Filters</button>
+  </RxOverflowItem>
+</RxOverflow>
+```
+
+### MUI
+
+```tsx
+import { MuiOverflow, MuiOverflowItem, MuiOverflowMenu } from './components/MuiOverflow';
+import { Button, MenuItem } from '@mui/material';
+
+<MuiOverflow sx={{ gap: 1 }}>
+  <MuiOverflowMenu opener={<Button>...</Button>}>
+    <MuiOverflowItem menuid="format">
+      <MenuItem>Format</MenuItem>
+    </MuiOverflowItem>
+    <MuiOverflowItem menuid="filter">
+      <MenuItem>Filters</MenuItem>
+    </MuiOverflowItem>
+  </MuiOverflowMenu>
+
+  <MuiOverflowItem menuid="format">
+    <Button>Format</Button>
+  </MuiOverflowItem>
+  <MuiOverflowItem menuid="filter">
+    <Button>Filters</Button>
+  </MuiOverflowItem>
+</MuiOverflow>
+```
+
+### Min State
+
+Items can shrink to a fixed width (icon-only) before being hidden entirely:
+
+```tsx
+<RxOverflowItem menuid="format" minStateWidth="2.25rem">
+  <button><FormatIcon /> Format</button>
+</RxOverflowItem>
+```
+
+For MUI, `minStateWidth` accepts a number (theme spacing units):
+
+```tsx
+<MuiOverflowItem menuid="format" minStateWidth={5}>
+  <Button><FormatIcon /> Format</Button>
+</MuiOverflowItem>
+```
+
+### Compact Mode
+
+Collapses items one at a time instead of all at once:
+
+```tsx
+<RxOverflow compact>
+  {/* ... */}
+</RxOverflow>
+```
+
+### Reverse Mode
+
+Collapses items from the left side first:
+
+```tsx
+<RxOverflow reverse>
+  {/* ... */}
+</RxOverflow>
+```
+
+### Menu-Only Items
+
+Items without a `menuid` always stay where they are — in the toolbar or in the menu:
+
+```tsx
+<RxOverflowMenu opener={<button>...</button>}>
+  <RxOverflowItem menuid="format">
+    <button>Format</button>
+  </RxOverflowItem>
+  {/* These always appear in the menu */}
+  <RxOverflowItem>
+    <div role="separator" />
+  </RxOverflowItem>
+  <RxOverflowItem>
+    <button>Help</button>
+  </RxOverflowItem>
+</RxOverflowMenu>
+```
+
+## API
+
+### `Overflow` / `RxOverflow` / `MuiOverflow`
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `children` | `ReactNode` | Overflow items and menu |
+| `compact` | `boolean` | Collapse items one at a time |
+| `reverse` | `boolean` | Collapse from the left |
+| `className` / `style` | | Standard HTML attributes |
+| `sx` | `SxProps` | MUI system props (MUI only) |
+
+### `OverflowItem` / `RxOverflowItem` / `MuiOverflowItem`
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `children` | `ReactNode` | Item content |
+| `menuid` | `string` | Links toolbar items to their menu counterparts |
+| `minStateWidth` | `string` \| `number` | Width when in min state (string for Rx, number for MUI) |
+
+### `OverflowMenu` / `RxOverflowMenu` / `MuiOverflowMenu`
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `children` | `ReactNode` | Menu items |
+| `opener` | `ReactNode` | The button that opens the menu |
