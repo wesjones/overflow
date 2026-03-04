@@ -1,13 +1,13 @@
 # Overflow
 
-[![npm version](https://img.shields.io/npm/v/overflow)](https://www.npmjs.com/package/overflow)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/overflow)](https://bundlephobia.com/package/overflow)
-[![license](https://img.shields.io/npm/l/overflow)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/overflow-toolbar)](https://www.npmjs.com/package/overflow-toolbar)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/overflow-toolbar)](https://bundlephobia.com/package/overflow-toolbar)
+[![license](https://img.shields.io/npm/l/overflow-toolbar)](./LICENSE)
 [![CI](https://github.com/wesjones/overflow/actions/workflows/ci.yml/badge.svg)](https://github.com/wesjones/overflow/actions/workflows/ci.yml)
 
 A responsive toolbar overflow component that automatically collapses items into a dropdown menu as the container shrinks. Items transition through three states: **visible** → **min** (icon-only) → **hidden** (moved to menu).
 
-[**Live Demo**](https://wesjones.github.io/overflow/)
+<a href="https://wesjones.github.io/overflow/" target="_blank"><strong>Live Demo</strong></a>
 
 ## Features
 
@@ -17,24 +17,24 @@ A responsive toolbar overflow component that automatically collapses items into 
 - **Reverse mode** — collapse from the left instead of the right
 - **Menu-only items** — items that always live in the dropdown (e.g. Help, About)
 - **Min state** — items shrink to icon-only before being fully hidden
-- **Three implementations** — React/Radix UI, Material UI, and vanilla JavaScript
+- **Three implementations** — React/Radix UI (shadcn-compatible), Material UI, and vanilla JavaScript
 - **Tree-shakeable** — import only the variant you need via subpath exports
 - **TypeScript** — full type declarations included
 
 ## Install
 
 ```bash
-npm install overflow
+npm install overflow-toolbar
 ```
 
 ## Quick Start
 
-### Radix UI (React)
+### Radix UI / shadcn (React)
 
 ```tsx
-import { RxOverflow, RxOverflowItem, RxOverflowMenu } from 'overflow/rx';
-import 'overflow/rx/styles';
-import 'overflow/styles';
+import { RxOverflow, RxOverflowItem, RxOverflowMenu } from 'overflow-toolbar/rx';
+import 'overflow-toolbar/rx/styles';
+import 'overflow-toolbar/styles';
 
 <RxOverflow style={{ gap: 8 }}>
   <RxOverflowMenu opener={<button>More</button>}>
@@ -50,8 +50,8 @@ import 'overflow/styles';
 ### Material UI (React)
 
 ```tsx
-import { MuiOverflow, MuiOverflowItem, MuiOverflowMenu } from 'overflow/mui';
-import 'overflow/styles';
+import { MuiOverflow, MuiOverflowItem, MuiOverflowMenu } from 'overflow-toolbar/mui';
+import 'overflow-toolbar/styles';
 import { Button, MenuItem } from '@mui/material';
 
 <MuiOverflow sx={{ gap: 1 }}>
@@ -68,9 +68,9 @@ import { Button, MenuItem } from '@mui/material';
 ### Vanilla JavaScript
 
 ```js
-import { OverflowToolbar } from 'overflow/vanilla';
-import 'overflow/vanilla/styles';
-import 'overflow/styles';
+import { OverflowToolbar } from 'overflow-toolbar/vanilla';
+import 'overflow-toolbar/vanilla/styles';
+import 'overflow-toolbar/styles';
 
 const ul = document.querySelector('#my-toolbar');
 const toolbar = new OverflowToolbar(ul);
@@ -103,14 +103,14 @@ Import only what you need for optimal tree-shaking:
 
 | Import path | Contents |
 |---|---|
-| `overflow` | Everything (all variants) |
-| `overflow/core` | Core React components (`Overflow`, `OverflowItem`, `OverflowMenu`, `OverflowController`) |
-| `overflow/rx` | Radix UI variant (`RxOverflow`, `RxOverflowItem`, `RxOverflowMenu`) |
-| `overflow/mui` | Material UI variant (`MuiOverflow`, `MuiOverflowItem`, `MuiOverflowMenu`) |
-| `overflow/vanilla` | Vanilla JS (`OverflowToolbar`) |
-| `overflow/styles` | Core CSS (required by all variants) |
-| `overflow/rx/styles` | Radix UI styles |
-| `overflow/vanilla/styles` | Vanilla JS styles |
+| `overflow-toolbar` | Everything (all variants) |
+| `overflow-toolbar/core` | Core React components (`Overflow`, `OverflowItem`, `OverflowMenu`, `OverflowController`) |
+| `overflow-toolbar/rx` | Radix UI / shadcn variant (`RxOverflow`, `RxOverflowItem`, `RxOverflowMenu`) |
+| `overflow-toolbar/mui` | Material UI variant (`MuiOverflow`, `MuiOverflowItem`, `MuiOverflowMenu`) |
+| `overflow-toolbar/vanilla` | Vanilla JS (`OverflowToolbar`) |
+| `overflow-toolbar/styles` | Core CSS (required by all variants) |
+| `overflow-toolbar/rx/styles` | Radix UI styles |
+| `overflow-toolbar/vanilla/styles` | Vanilla JS styles |
 
 ## API
 
@@ -251,7 +251,7 @@ pnpm lint           # lint
 
 ## Also Known As
 
-This component implements what is commonly known as a responsive toolbar, overflow menu, adaptive toolbar, collapsible toolbar, priority+ pattern, priority-plus navigation, toolbar button group overflow, responsive action bar, command bar, or "more menu." It handles responsive buttons, auto-collapse, icon-only collapse, and dynamic toolbar resizing using ResizeObserver.
+This component implements what is commonly known as a responsive toolbar, overflow menu, adaptive toolbar, collapsible toolbar, priority+ pattern, priority-plus navigation, toolbar button group overflow, responsive action bar, command bar, or "more menu." It handles responsive buttons, auto-collapse, icon-only collapse, and dynamic toolbar resizing using ResizeObserver. The Radix UI variant is fully compatible with shadcn/ui projects.
 
 ## License
 

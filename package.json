@@ -1,6 +1,6 @@
 {
-  "name": "overflow",
-  "version": "0.0.0",
+  "name": "overflow-toolbar",
+  "version": "0.1.0",
   "type": "module",
   "description": "Responsive toolbar overflow component — items automatically collapse into a dropdown menu as the container shrinks. Supports visible, icon-only (min), and hidden states. Ships with React (Radix UI), MUI, and vanilla JS implementations.",
   "license": "MIT",
@@ -11,6 +11,7 @@
   },
   "homepage": "https://wesjones.github.io/overflow/",
   "keywords": [
+    "overflow-toolbar",
     "overflow",
     "toolbar",
     "responsive toolbar",
@@ -31,6 +32,10 @@
     "react toolbar",
     "mui toolbar",
     "radix toolbar",
+    "shadcn",
+    "shadcn toolbar",
+    "shadcn overflow",
+    "shadcn ui toolbar",
     "resize observer",
     "auto-collapse",
     "icon-only collapse",
