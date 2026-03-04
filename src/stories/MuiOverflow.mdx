@@ -1,0 +1,312 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as MuiOverflowStories from './MuiOverflow.stories';
+
+<Meta of={MuiOverflowStories} />
+
+# MuiOverflow
+
+A responsive overflow toolbar built with [Material UI](https://mui.com/). Items automatically collapse into a dropdown menu as the container shrinks. Supports three visibility states: **visible**, **min** (icon-only), and **hidden** (moved to menu).
+
+<Canvas of={MuiOverflowStories.Default} />
+
+## Installation
+
+MuiOverflow uses Material UI for the dropdown menu and styled components. Install the required peer dependencies:
+
+```bash
+pnpm add @mui/material @emotion/react @emotion/styled
+```
+
+If you need Material icons (used in the examples):
+
+```bash
+pnpm add @mui/icons-material
+```
+
+Copy the component files into your project:
+
+```
+components/
+  Overflow/          # Base overflow engine (required)
+    Overflow.tsx
+    Overflow.css
+    OverflowContext.ts
+    OverflowItem.tsx
+    OverflowMenu.tsx
+    overflowSteps.ts
+    useResizer.tsx
+    index.ts
+  MuiOverflow/       # Material UI wrapper
+    MuiOverflow.tsx
+    MuiOverflowItem.tsx
+    MuiOverflowMenu.tsx
+    index.ts
+```
+
+Import the base overflow CSS in your app entry point or component:
+
+```tsx
+import './components/Overflow/Overflow.css';
+```
+
+## Quick Start
+
+```tsx
+import { MuiOverflow, MuiOverflowItem, MuiOverflowMenu } from './components/MuiOverflow';
+import { Button, MenuItem } from '@mui/material';
+```
+
+Every overflow toolbar has three parts:
+
+1. **`MuiOverflow`** — the container (a styled MUI component that accepts `sx` props)
+2. **`MuiOverflowItem`** — each toolbar item
+3. **`MuiOverflowMenu`** — the dropdown that collects hidden items
+
+Items are linked between the toolbar and the menu using a shared **`menuid`**. When a toolbar item overflows, the menu item with the same `menuid` appears in the dropdown.
+
+```tsx
+<MuiOverflow sx={{ gap: 1 }}>
+  {/* Menu definition — items here appear when their toolbar counterpart overflows */}
+  <MuiOverflowMenu
+    opener={<Button variant="contained"><MoreHoriz /></Button>}
+  >
+    <MuiOverflowItem menuid="format">
+      <MenuItem>Format</MenuItem>
+    </MuiOverflowItem>
+    <MuiOverflowItem menuid="filter">
+      <MenuItem>Filters</MenuItem>
+    </MuiOverflowItem>
+  </MuiOverflowMenu>
+
+  {/* Toolbar items — these are visible when there's enough room */}
+  <MuiOverflowItem menuid="format">
+    <Button variant="contained" sx={{ gap: 1 }}>
+      <BlurLinear /> Format
+    </Button>
+  </MuiOverflowItem>
+  <MuiOverflowItem menuid="filter">
+    <Button variant="contained" sx={{ gap: 1 }}>
+      <Workspaces /> Filters
+    </Button>
+  </MuiOverflowItem>
+</MuiOverflow>
+```
+
+> Resize the dashed container in any of the examples below to see the overflow behavior in action.
+
+## Features
+
+### Min State
+
+Before an item is fully hidden, it can shrink to a fixed width — typically just showing its icon. Set `minStateWidth` on the toolbar `MuiOverflowItem` to enable this. The value is a **number** that maps to MUI's `theme.spacing()`.
+
+<Canvas of={MuiOverflowStories.MinState} />
+
+```tsx
+<MuiOverflowItem menuid="format" minStateWidth={5}>
+  <Button variant="contained" sx={{ gap: 1 }}>
+    <BlurLinear />
+    Format
+  </Button>
+</MuiOverflowItem>
+```
+
+`minStateWidth={5}` resolves to `theme.spacing(5)` which is `40px` by default. When the container is too narrow for the full label but wide enough for the icon, the item enters its **min state** — the text is clipped and the element is constrained. The `data-state` attribute changes to `"min"`, and a CSS class `overflow-item-min` is applied.
+
+### Always-Visible Items
+
+Items without a `menuid` that live **outside** the menu always remain visible in the toolbar, regardless of available space. They are never moved to the menu.
+
+<Canvas of={MuiOverflowStories.AlwaysVisible} />
+
+```tsx
+<MuiOverflow sx={{ gap: 1 }}>
+  <MuiOverflowMenu opener={<Button variant="contained"><MoreHoriz /></Button>}>
+    <MuiOverflowItem menuid="format">
+      <MenuItem>Format</MenuItem>
+    </MuiOverflowItem>
+  </MuiOverflowMenu>
+
+  <MuiOverflowItem menuid="format">
+    <Button variant="contained">Format</Button>
+  </MuiOverflowItem>
+
+  {/* No menuid — always visible in toolbar */}
+  <MuiOverflowItem>
+    <Button variant="contained"><Search /> Search</Button>
+  </MuiOverflowItem>
+  <MuiOverflowItem>
+    <Button variant="contained"><Settings /> Settings</Button>
+  </MuiOverflowItem>
+</MuiOverflow>
+```
+
+### Compact Mode
+
+By default, all items collapse at the same breakpoint. With `compact`, items collapse **one at a time** from the end, giving a smoother progressive experience.
+
+<Canvas of={MuiOverflowStories.Compact} />
+
+```tsx
+<MuiOverflow compact>
+  {/* items collapse individually as space runs out */}
+</MuiOverflow>
+```
+
+### Menu-Only Items
+
+Items without a `menuid` that live **inside** `MuiOverflowMenu` always appear in the menu. This is useful for items like Help, About, or dividers that should always be accessible from the dropdown.
+
+<Canvas of={MuiOverflowStories.MenuOnly} />
+
+```tsx
+<MuiOverflowMenu
+  opener={<Button variant="contained"><MoreHoriz /></Button>}
+>
+  <MuiOverflowItem menuid="format">
+    <MenuItem>Format</MenuItem>
+  </MuiOverflowItem>
+
+  {/* Always in menu — no menuid */}
+  <MuiOverflowItem>
+    <Divider />
+  </MuiOverflowItem>
+  <MuiOverflowItem>
+    <MenuItem>Help</MenuItem>
+  </MuiOverflowItem>
+  <MuiOverflowItem>
+    <MenuItem>About</MenuItem>
+  </MuiOverflowItem>
+</MuiOverflowMenu>
+```
+
+When menu-only items exist, the menu opener button stays visible even if all linked items fit in the toolbar.
+
+### Reverse Mode
+
+Collapses items from the **left** instead of the right. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
+
+<Canvas of={MuiOverflowStories.Reverse} />
+
+```tsx
+<MuiOverflow compact reverse>
+  {/* leftmost items collapse first */}
+</MuiOverflow>
+```
+
+### Both Sides
+
+Place two `MuiOverflow` containers side by side for toolbars that overflow from both ends. Each manages its own items independently.
+
+<Canvas of={MuiOverflowStories.BothSides} />
+
+```tsx
+<div style={{ display: 'flex' }}>
+  {/* Left group: reversed so left items hide first */}
+  <MuiOverflow compact reverse sx={{ minWidth: 0 }}>
+    {/* ... */}
+  </MuiOverflow>
+
+  {/* Right group: collapses normally from the right */}
+  <MuiOverflow compact sx={{ minWidth: 0 }}>
+    {/* ... */}
+  </MuiOverflow>
+</div>
+```
+
+Set `minWidth: 0` on each via `sx` so they share space equally via flexbox.
+
+## MUI Integration
+
+### Styled Component
+
+`MuiOverflow` is a [styled component](https://mui.com/system/styled/) wrapping the base `Overflow`, so it accepts MUI's `sx` prop for system-level styling:
+
+```tsx
+<MuiOverflow sx={{ gap: 1, p: 2, bgcolor: 'background.paper' }}>
+  {/* ... */}
+</MuiOverflow>
+```
+
+### Theme Spacing
+
+`MuiOverflowItem` uses `theme.spacing()` to convert the `minStateWidth` number into a CSS value. This keeps your overflow widths consistent with MUI's spacing scale:
+
+| `minStateWidth` | Default output |
+|-----------------|---------------|
+| `4` | `32px` |
+| `5` | `40px` |
+| `6` | `48px` |
+
+### Menu Component
+
+`MuiOverflowMenu` renders a standard [MUI Menu](https://mui.com/material-ui/react-menu/) anchored to the opener button. Use MUI's `MenuItem`, `Divider`, `ListItemIcon`, and other menu primitives inside it:
+
+```tsx
+<MuiOverflowMenu
+  opener={<IconButton><MoreHoriz /></IconButton>}
+>
+  <MuiOverflowItem menuid="format">
+    <MenuItem>
+      <ListItemIcon><BlurLinear /></ListItemIcon>
+      Format
+    </MenuItem>
+  </MuiOverflowItem>
+</MuiOverflowMenu>
+```
+
+### Data Attributes
+
+Each `MuiOverflowItem` with a `menuid` renders a `<li>` with a `data-state` attribute:
+
+| Value | Meaning |
+|-------|---------|
+| `"visible"` | Item is fully visible |
+| `"min"` | Item is in its collapsed min state |
+| `"hidden"` | Item is hidden (moved to menu) |
+
+You can target these with MUI's `sx` prop or regular CSS:
+
+```tsx
+<MuiOverflowItem menuid="format" minStateWidth={5}>
+  <Button
+    variant="contained"
+    sx={{
+      'li[data-state="min"] &': {
+        minWidth: 0,
+        px: 1,
+      },
+    }}
+  >
+    <BlurLinear /> Format
+  </Button>
+</MuiOverflowItem>
+```
+
+## API Reference
+
+### `MuiOverflow`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Overflow items and menu |
+| `compact` | `boolean` | `false` | Collapse items one at a time |
+| `reverse` | `boolean` | `false` | Collapse from the left |
+| `sx` | `SxProps<Theme>` | — | MUI system props |
+| `className` | `string` | — | Additional CSS class |
+| `style` | `CSSProperties` | — | Inline styles |
+
+### `MuiOverflowItem`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Item content |
+| `menuid` | `string` | — | Links toolbar and menu items. Omit for always-visible or menu-only items. |
+| `minStateWidth` | `number` | — | Theme spacing units for min state width (e.g. `5` = `theme.spacing(5)`) |
+
+### `MuiOverflowMenu`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Menu items (shown when linked toolbar items overflow) |
+| `opener` | `ReactNode` | — | The element that triggers the menu (e.g. a Button or IconButton) |

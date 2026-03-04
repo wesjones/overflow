@@ -1,4 +1,3 @@
-import React from 'react';
 import { BlurLinear, MoreHoriz, Search, Settings, Workspaces } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -45,10 +44,10 @@ export const Default: Story = {
           }
         >
           <MuiOverflowItem menuid="btn1">
-            <MenuItem>Button 1</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn2">
-            <MenuItem>Button 2</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn3">
             <MenuItem>Button 3</MenuItem>
@@ -87,10 +86,10 @@ export const AlwaysVisible: Story = {
           }
         >
           <MuiOverflowItem menuid="btn1">
-            <MenuItem>Button 1</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn2">
-            <MenuItem>Button 2</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
         <MuiOverflowItem menuid="btn1">
@@ -135,10 +134,10 @@ export const MenuOnly: Story = {
           }
         >
           <MuiOverflowItem menuid="btn1">
-            <MenuItem>Button 1</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn2">
-            <MenuItem>Button 2</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem>
             <Divider />
@@ -186,13 +185,13 @@ export const MinState: Story = {
           }
         >
           <MuiOverflowItem menuid="btn1">
-            <MenuItem>Button 1</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn2">
-            <MenuItem>Button 2</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn3">
-            <MenuItem>Button 3</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Settings /> Button 3</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
         <MuiOverflowItem menuid="btn1" minStateWidth={5}>
@@ -231,13 +230,19 @@ export const Compact: Story = {
           }
         >
           <MuiOverflowItem menuid="btn1">
-            <MenuItem>Button 1</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn2">
-            <MenuItem>Button 2</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn3">
             <MenuItem>Button 3</MenuItem>
+          </MuiOverflowItem>
+          <MuiOverflowItem menuid="btn4">
+            <MenuItem sx={{ gap: 1 }}><Search /> Search</MenuItem>
+          </MuiOverflowItem>
+          <MuiOverflowItem menuid="btn5">
+            <MenuItem sx={{ gap: 1 }}><Settings /> Settings</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem>
             <Divider />
@@ -290,13 +295,13 @@ export const BothSides: Story = {
           }
         >
           <MuiOverflowItem menuid="L1">
-            <MenuItem>Format</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Format</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="L2">
-            <MenuItem>Filters</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Filters</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="L3">
-            <MenuItem>Views</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Settings /> Views</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
         <MuiOverflowItem menuid="L1" minStateWidth={5}>
@@ -328,13 +333,13 @@ export const BothSides: Story = {
           }
         >
           <MuiOverflowItem menuid="R1">
-            <MenuItem>Search</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Search /> Search</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="R2">
-            <MenuItem>Settings</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Settings /> Settings</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="R3">
-            <MenuItem>Help</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Help</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
         <MuiOverflowItem menuid="R1" minStateWidth={5}>
@@ -374,13 +379,19 @@ export const Reverse: Story = {
           }
         >
           <MuiOverflowItem menuid="btn1">
-            <MenuItem>Button 1</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn2">
-            <MenuItem>Button 2</MenuItem>
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem menuid="btn3">
             <MenuItem>Button 3</MenuItem>
+          </MuiOverflowItem>
+          <MuiOverflowItem menuid="btn4">
+            <MenuItem sx={{ gap: 1 }}><Search /> Search</MenuItem>
+          </MuiOverflowItem>
+          <MuiOverflowItem menuid="btn5">
+            <MenuItem sx={{ gap: 1 }}><Settings /> Settings</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem>
             <Divider />

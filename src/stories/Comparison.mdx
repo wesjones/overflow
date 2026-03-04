@@ -1,0 +1,88 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as RxStories from './RxOverflow.stories';
+import * as MuiStories from './MuiOverflow.stories';
+import * as NfStories from './NoFrameworkOverflow.stories';
+
+<Meta title="Overview" />
+
+# Overflow Variants — Side by Side
+
+All three implementations use the same pure algorithm (`overflowSteps.ts`). Resize each container to compare behavior.
+
+---
+
+## Default
+
+**RxOverflow** (Radix UI)
+<Canvas of={RxStories.Default} />
+
+**MuiOverflow** (Material UI)
+<Canvas of={MuiStories.Default} />
+
+**NoFrameworkOverflow** (Vanilla JS)
+<Canvas of={NfStories.Default} />
+
+---
+
+## Min State
+
+**RxOverflow**
+<Canvas of={RxStories.MinState} />
+
+**MuiOverflow**
+<Canvas of={MuiStories.MinState} />
+
+**NoFrameworkOverflow**
+<Canvas of={NfStories.MinState} />
+
+---
+
+## Menu Only
+
+**RxOverflow**
+<Canvas of={RxStories.MenuOnly} />
+
+**MuiOverflow**
+<Canvas of={MuiStories.MenuOnly} />
+
+**NoFrameworkOverflow**
+<Canvas of={NfStories.MenuOnly} />
+
+---
+
+## Compact
+
+**RxOverflow**
+<Canvas of={RxStories.Compact} />
+
+**MuiOverflow**
+<Canvas of={MuiStories.Compact} />
+
+**NoFrameworkOverflow**
+<Canvas of={NfStories.Compact} />
+
+---
+
+## Reverse
+
+**RxOverflow**
+<Canvas of={RxStories.Reverse} />
+
+**MuiOverflow**
+<Canvas of={MuiStories.Reverse} />
+
+**NoFrameworkOverflow**
+<Canvas of={NfStories.Reverse} />
+
+---
+
+## Both Sides
+
+**RxOverflow**
+<Canvas of={RxStories.BothSides} />
+
+**MuiOverflow**
+<Canvas of={MuiStories.BothSides} />
+
+**NoFrameworkOverflow**
+<Canvas of={NfStories.BothSides} />

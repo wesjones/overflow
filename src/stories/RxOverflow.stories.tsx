@@ -1,5 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AlignLeft, MoreHorizontal, Search, Settings, Workflow } from 'lucide-react';
+import { AlignLeft, Search, Settings, Workflow } from 'lucide-react';
+
+const MoreDots = ({ size = 24 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <circle cx="5" cy="12" r="2.5" />
+    <circle cx="12" cy="12" r="2.5" />
+    <circle cx="19" cy="12" r="2.5" />
+  </svg>
+);
 import { RxOverflow, RxOverflowItem, RxOverflowMenu } from '../components/RxOverflow';
 
 const meta: Meta<typeof RxOverflow> = {
@@ -33,12 +41,12 @@ export const Default: Story = {
     style: { gap: 8 },
     children: (
       <>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="btn1">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Button 1</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Button 1</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn2">
-            <button className="rx-menu-item"><Workflow size={14} /> Button 2</button>
+            <button className="rx-menu-item"><Workflow size={18} /> Button 2</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn3">
             <button className="rx-menu-item">Button 3</button>
@@ -46,13 +54,13 @@ export const Default: Story = {
         </RxOverflowMenu>
         <RxOverflowItem menuid="btn1">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Button 1
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn2">
           <button className="rx-btn">
-            <Workflow size={16} />
+            <Workflow size={20} />
             Button 2
           </button>
         </RxOverflowItem>
@@ -69,32 +77,32 @@ export const MinState: Story = {
     style: { gap: 8 },
     children: (
       <>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="btn1">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Button 1</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Button 1</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn2">
-            <button className="rx-menu-item"><Workflow size={14} /> Button 2</button>
+            <button className="rx-menu-item"><Workflow size={18} /> Button 2</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn3">
-            <button className="rx-menu-item"><Settings size={14} /> Button 3</button>
+            <button className="rx-menu-item"><Settings size={18} /> Button 3</button>
           </RxOverflowItem>
         </RxOverflowMenu>
         <RxOverflowItem menuid="btn1" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Button 1
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn2" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Workflow size={16} />
+            <Workflow size={20} />
             Button 2
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn3" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Settings size={16} />
+            <Settings size={20} />
             Button 3
           </button>
         </RxOverflowItem>
@@ -108,12 +116,12 @@ export const MenuOnly: Story = {
     style: { gap: 8 },
     children: (
       <>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="btn1">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Button 1</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Button 1</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn2">
-            <button className="rx-menu-item"><Workflow size={14} /> Button 2</button>
+            <button className="rx-menu-item"><Workflow size={18} /> Button 2</button>
           </RxOverflowItem>
           <RxOverflowItem>
             <div className="rx-separator" role="separator" />
@@ -127,19 +135,19 @@ export const MenuOnly: Story = {
         </RxOverflowMenu>
         <RxOverflowItem menuid="btn1">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Button 1
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn2">
           <button className="rx-btn">
-            <Workflow size={16} />
+            <Workflow size={20} />
             Button 2
           </button>
         </RxOverflowItem>
         <RxOverflowItem>
           <button className="rx-btn">
-            <Search size={16} />
+            <Search size={20} />
             Search
           </button>
         </RxOverflowItem>
@@ -153,15 +161,21 @@ export const Compact: Story = {
     compact: true,
     children: (
       <>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="btn1">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Button 1</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Button 1</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn2">
-            <button className="rx-menu-item"><Workflow size={14} /> Button 2</button>
+            <button className="rx-menu-item"><Workflow size={18} /> Button 2</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn3">
             <button className="rx-menu-item">Button 3</button>
+          </RxOverflowItem>
+          <RxOverflowItem menuid="btn4">
+            <button className="rx-menu-item"><Search size={18} /> Search</button>
+          </RxOverflowItem>
+          <RxOverflowItem menuid="btn5">
+            <button className="rx-menu-item"><Settings size={18} /> Settings</button>
           </RxOverflowItem>
           <RxOverflowItem>
             <div className="rx-separator" role="separator" />
@@ -172,13 +186,13 @@ export const Compact: Story = {
         </RxOverflowMenu>
         <RxOverflowItem menuid="btn1" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Button 1
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn2" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Workflow size={16} />
+            <Workflow size={20} />
             Button 2
           </button>
         </RxOverflowItem>
@@ -187,13 +201,13 @@ export const Compact: Story = {
         </RxOverflowItem>
         <RxOverflowItem menuid="btn4" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Search size={16} />
+            <Search size={20} />
             Search
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn5" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Settings size={16} />
+            <Settings size={20} />
             Settings
           </button>
         </RxOverflowItem>
@@ -206,64 +220,64 @@ export const BothSides: Story = {
   render: () => (
     <>
       <RxOverflow compact reverse style={{ minWidth: 0 }}>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="L1">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Format</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Format</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="L2">
-            <button className="rx-menu-item"><Workflow size={14} /> Filters</button>
+            <button className="rx-menu-item"><Workflow size={18} /> Filters</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="L3">
-            <button className="rx-menu-item"><Settings size={14} /> Views</button>
+            <button className="rx-menu-item"><Settings size={18} /> Views</button>
           </RxOverflowItem>
         </RxOverflowMenu>
         <RxOverflowItem menuid="L1" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Format
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="L2" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Workflow size={16} />
+            <Workflow size={20} />
             Filters
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="L3" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Settings size={16} />
+            <Settings size={20} />
             Views
           </button>
         </RxOverflowItem>
       </RxOverflow>
 
       <RxOverflow compact style={{ minWidth: 0 }}>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="R1">
-            <button className="rx-menu-item"><Search size={14} /> Search</button>
+            <button className="rx-menu-item"><Search size={18} /> Search</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="R2">
-            <button className="rx-menu-item"><Settings size={14} /> Settings</button>
+            <button className="rx-menu-item"><Settings size={18} /> Settings</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="R3">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Help</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Help</button>
           </RxOverflowItem>
         </RxOverflowMenu>
         <RxOverflowItem menuid="R1" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Search size={16} />
+            <Search size={20} />
             Search
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="R2" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Settings size={16} />
+            <Settings size={20} />
             Settings
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="R3" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Help
           </button>
         </RxOverflowItem>
@@ -278,15 +292,21 @@ export const Reverse: Story = {
     reverse: true,
     children: (
       <>
-        <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+        <RxOverflowMenu opener={<button className="rx-btn"><MoreDots /></button>}>
           <RxOverflowItem menuid="btn1">
-            <button className="rx-menu-item"><AlignLeft size={14} /> Button 1</button>
+            <button className="rx-menu-item"><AlignLeft size={18} /> Button 1</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn2">
-            <button className="rx-menu-item"><Workflow size={14} /> Button 2</button>
+            <button className="rx-menu-item"><Workflow size={18} /> Button 2</button>
           </RxOverflowItem>
           <RxOverflowItem menuid="btn3">
             <button className="rx-menu-item">Button 3</button>
+          </RxOverflowItem>
+          <RxOverflowItem menuid="btn4">
+            <button className="rx-menu-item"><Search size={18} /> Search</button>
+          </RxOverflowItem>
+          <RxOverflowItem menuid="btn5">
+            <button className="rx-menu-item"><Settings size={18} /> Settings</button>
           </RxOverflowItem>
           <RxOverflowItem>
             <div className="rx-separator" role="separator" />
@@ -297,13 +317,13 @@ export const Reverse: Story = {
         </RxOverflowMenu>
         <RxOverflowItem menuid="btn1" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <AlignLeft size={16} />
+            <AlignLeft size={20} />
             Button 1
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn2" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Workflow size={16} />
+            <Workflow size={20} />
             Button 2
           </button>
         </RxOverflowItem>
@@ -312,13 +332,13 @@ export const Reverse: Story = {
         </RxOverflowItem>
         <RxOverflowItem menuid="btn4" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Search size={16} />
+            <Search size={20} />
             Search
           </button>
         </RxOverflowItem>
         <RxOverflowItem menuid="btn5" minStateWidth="2.25rem">
           <button className="rx-btn">
-            <Settings size={16} />
+            <Settings size={20} />
             Settings
           </button>
         </RxOverflowItem>

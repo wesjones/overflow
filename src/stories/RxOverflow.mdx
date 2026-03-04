@@ -1,0 +1,247 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as RxOverflowStories from './RxOverflow.stories';
+
+<Meta of={RxOverflowStories} />
+
+# RxOverflow
+
+A responsive overflow toolbar built with [Radix UI](https://www.radix-ui.com/). Items automatically collapse into a popover menu as the container shrinks. Supports three visibility states: **visible**, **min** (icon-only), and **hidden** (moved to menu).
+
+<Canvas of={RxOverflowStories.Default} />
+
+## Installation
+
+RxOverflow uses Radix UI for the dropdown menu. Install the required peer dependencies alongside the overflow components:
+
+```bash
+pnpm add @radix-ui/react-popover
+```
+
+If you're using Tailwind CSS and want the included `cn` utility:
+
+```bash
+pnpm add clsx tailwind-merge
+```
+
+Copy the component files into your project:
+
+```
+components/
+  Overflow/          # Base overflow engine (required)
+    Overflow.tsx
+    Overflow.css
+    OverflowContext.ts
+    OverflowItem.tsx
+    OverflowMenu.tsx
+    overflowSteps.ts
+    useResizer.tsx
+    index.ts
+  RxOverflow/        # Radix UI wrapper
+    RxOverflow.tsx
+    RxOverflowItem.tsx
+    RxOverflowMenu.tsx
+    rx.css
+    cn.ts
+    index.ts
+```
+
+Import the Radix overflow CSS in your app entry point or component:
+
+```tsx
+import './components/RxOverflow/rx.css';
+```
+
+## Quick Start
+
+```tsx
+import { RxOverflow, RxOverflowItem, RxOverflowMenu } from './components/RxOverflow';
+```
+
+Every overflow toolbar has three parts:
+
+1. **`RxOverflow`** — the container
+2. **`RxOverflowItem`** — each toolbar item
+3. **`RxOverflowMenu`** — the dropdown that collects hidden items
+
+Items are linked between the toolbar and the menu using a shared **`menuid`**. When a toolbar item overflows, the menu item with the same `menuid` appears in the dropdown.
+
+```tsx
+<RxOverflow style={{ gap: 8 }}>
+  {/* Menu definition — items here appear when their toolbar counterpart overflows */}
+  <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+    <RxOverflowItem menuid="format">
+      <button className="rx-menu-item"><AlignLeft size={14} /> Format</button>
+    </RxOverflowItem>
+    <RxOverflowItem menuid="filter">
+      <button className="rx-menu-item"><Workflow size={14} /> Filters</button>
+    </RxOverflowItem>
+  </RxOverflowMenu>
+
+  {/* Toolbar items — these are visible when there's enough room */}
+  <RxOverflowItem menuid="format">
+    <button className="rx-btn"><AlignLeft size={16} /> Format</button>
+  </RxOverflowItem>
+  <RxOverflowItem menuid="filter">
+    <button className="rx-btn"><Workflow size={16} /> Filters</button>
+  </RxOverflowItem>
+</RxOverflow>
+```
+
+> Resize the dashed container in any of the examples below to see the overflow behavior in action.
+
+## Features
+
+### Min State
+
+Before an item is fully hidden, it can shrink to a fixed width — typically just showing its icon. Set `minStateWidth` on the toolbar `RxOverflowItem` to enable this. The value is a CSS width string.
+
+<Canvas of={RxOverflowStories.MinState} />
+
+```tsx
+<RxOverflowItem menuid="format" minStateWidth="2.25rem">
+  <button className="rx-btn">
+    <AlignLeft size={16} />
+    Format
+  </button>
+</RxOverflowItem>
+```
+
+When the container is too narrow for the full label but wide enough for the icon, the item enters its **min state** — the text is clipped and the element is constrained to `minStateWidth`. The `data-state` attribute on the `<li>` wrapper changes to `"min"`, and a CSS class `overflow-item-min` is applied, so you can style the collapsed state:
+
+```css
+.overflow-item-min button {
+  padding-inline: 0.5rem;
+  justify-content: center;
+}
+```
+
+### Compact Mode
+
+By default, all items collapse at the same breakpoint. With `compact`, items collapse **one at a time** from the end, giving a smoother progressive experience.
+
+<Canvas of={RxOverflowStories.Compact} />
+
+```tsx
+<RxOverflow compact style={{ gap: 8 }}>
+  {/* items collapse individually as space runs out */}
+</RxOverflow>
+```
+
+### Menu-Only Items
+
+Items without a `menuid` are not linked to any toolbar counterpart. If they are inside `RxOverflowMenu`, they **always** appear in the menu (useful for Help, About, or dividers). If they are outside the menu, they **always** appear in the toolbar.
+
+<Canvas of={RxOverflowStories.MenuOnly} />
+
+```tsx
+<RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+  <RxOverflowItem menuid="format">
+    <button className="rx-menu-item">Format</button>
+  </RxOverflowItem>
+
+  {/* Always in menu — no menuid */}
+  <RxOverflowItem>
+    <div className="rx-separator" role="separator" />
+  </RxOverflowItem>
+  <RxOverflowItem>
+    <button className="rx-menu-item">Help</button>
+  </RxOverflowItem>
+  <RxOverflowItem>
+    <button className="rx-menu-item">About</button>
+  </RxOverflowItem>
+</RxOverflowMenu>
+```
+
+When menu-only items exist, the menu opener button stays visible even if all linked items fit in the toolbar.
+
+### Reverse Mode
+
+Collapses items from the **left** instead of the right. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
+
+<Canvas of={RxOverflowStories.Reverse} />
+
+```tsx
+<RxOverflow compact reverse>
+  {/* leftmost items collapse first */}
+</RxOverflow>
+```
+
+### Both Sides
+
+Place two `RxOverflow` containers side by side for toolbars that overflow from both ends. Each manages its own items independently.
+
+<Canvas of={RxOverflowStories.BothSides} />
+
+```tsx
+<div style={{ display: 'flex' }}>
+  {/* Left group: collapses from the right, but reversed so left items hide first */}
+  <RxOverflow compact reverse style={{ minWidth: 0 }}>
+    {/* ... */}
+  </RxOverflow>
+
+  {/* Right group: collapses normally from the right */}
+  <RxOverflow compact style={{ minWidth: 0 }}>
+    {/* ... */}
+  </RxOverflow>
+</div>
+```
+
+Set `minWidth: 0` on each so they share space equally via flexbox.
+
+## Styling
+
+RxOverflow ships with `rx.css` which provides default styles for buttons, menu panels, and menu items. You can use these classes directly or replace them with your own.
+
+| Class | Element |
+|-------|---------|
+| `.rx-btn` | Toolbar button |
+| `.rx-menu-panel` | Popover menu container |
+| `.rx-menu-item` | Item inside the popover menu |
+| `.rx-separator` | Horizontal divider in the menu |
+
+The popover menu has enter/exit animations defined as CSS keyframes (`popover-in` / `popover-out`).
+
+### Data Attributes
+
+Each `RxOverflowItem` with a `menuid` renders a `<li>` with a `data-state` attribute:
+
+| Value | Meaning |
+|-------|---------|
+| `"visible"` | Item is fully visible |
+| `"min"` | Item is in its collapsed min state |
+| `"hidden"` | Item is hidden (moved to menu) |
+
+Use these for conditional styling:
+
+```css
+li[data-state="min"] button {
+  /* icon-only styles */
+}
+```
+
+## API Reference
+
+### `RxOverflow`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Overflow items and menu |
+| `compact` | `boolean` | `false` | Collapse items one at a time |
+| `reverse` | `boolean` | `false` | Collapse from the left |
+| `className` | `string` | — | Additional CSS class |
+| `style` | `CSSProperties` | — | Inline styles |
+
+### `RxOverflowItem`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Item content |
+| `menuid` | `string` | — | Links toolbar and menu items. Omit for always-visible or menu-only items. |
+| `minStateWidth` | `string` | — | CSS width when in min state (e.g. `"2.25rem"`) |
+
+### `RxOverflowMenu`
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Menu items (shown when linked toolbar items overflow) |
+| `opener` | `ReactNode` | — | The element that triggers the menu (e.g. a button) |

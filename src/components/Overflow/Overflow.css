@@ -2,14 +2,14 @@ div:has(> .overflow) {
   justify-content: space-between;
   gap: 1px;
   .overflow {
-    li:not([data-state='hidden']):first-child,
-    li[data-state='hidden']:first-child + li {
+    > :not([data-state='hidden']):first-child,
+    > [data-state='hidden']:first-child + :not([data-state='hidden']) {
       margin-left: auto;
       margin-right: 0;
     }
     &.overflow-reverse {
-      li:not([data-state='hidden']):first-child,
-      li[data-state='hidden']:first-child + li {
+      > :not([data-state='hidden']):first-child,
+      > [data-state='hidden']:first-child + :not([data-state='hidden']) {
         margin-left: 0;
         margin-right: auto;
       }
@@ -36,17 +36,15 @@ div:has(> .overflow) {
   margin-left: auto;
   padding: 0;
   flex: min(var(--hiddenCount, 0)) 1 auto;
-  li {
+  > * {
     flex: 0 0 fit-content;
     list-style: none;
     padding: 0;
     margin: 0;
-    &.overflow-opener {
-      max-width: var(--u5);
-    }
   }
-  li.overflow-opener {
+  > li.overflow-opener {
     margin-left: auto;
+    max-width: var(--u5);
   }
 }
 
@@ -57,13 +55,13 @@ div:has(> .overflow) {
 /* Compact (non-reverse): square corners based on DOM = visual order */
 .overflow-compact:not(.overflow-reverse) {
   /* Preceded by visible: square left corners */
-  > li:not([data-state='hidden']) ~ li:not([data-state='hidden']) > button {
+  > :not([data-state='hidden']) ~ :not([data-state='hidden']) > button {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
 
   /* Followed by visible: square right corners */
-  > li:not([data-state='hidden']):has(~ li:not([data-state='hidden'])) > button {
+  > :not([data-state='hidden']):has(~ :not([data-state='hidden'])) > button {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
@@ -74,7 +72,7 @@ div:has(> .overflow) {
   margin-right: auto;
   flex-direction: row-reverse;
 
-  li.overflow-opener {
+  > li.overflow-opener {
     margin-left: 0;
     margin-right: auto;
   }
@@ -83,13 +81,13 @@ div:has(> .overflow) {
 /* Compact + reverse: DOM order is visually flipped, so swap the radius sides */
 .overflow-compact.overflow-reverse {
   /* Preceded by visible in DOM = visually to the right: square right corners */
-  > li:not([data-state='hidden']) ~ li:not([data-state='hidden']) > button {
+  > :not([data-state='hidden']) ~ :not([data-state='hidden']) > button {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
 
   /* Followed by visible in DOM = visually to the left: square left corners */
-  > li:not([data-state='hidden']):has(~ li:not([data-state='hidden'])) > button {
+  > :not([data-state='hidden']):has(~ :not([data-state='hidden'])) > button {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -97,7 +95,7 @@ div:has(> .overflow) {
 
 .overflow-item-min,
 .overflow-opener {
-  button {
+  > button {
     font-size: 0; /* hide the text */
     min-width: 100%;
     width: 100%;

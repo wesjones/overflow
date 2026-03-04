@@ -1,0 +1,212 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as NoFrameworkOverflowStories from './NoFrameworkOverflow.stories';
+
+<Meta of={NoFrameworkOverflowStories} />
+
+# NoFrameworkOverflow
+
+A responsive overflow toolbar built with **zero dependencies** — just vanilla JavaScript and the native Popover API. Items automatically collapse into a popover menu as the container shrinks. Supports three visibility states: **visible**, **min** (icon-only), and **hidden** (moved to menu).
+
+<Canvas of={NoFrameworkOverflowStories.Default} />
+
+## Installation
+
+NoFrameworkOverflow has no runtime dependencies. It imports the pure algorithm from `overflowSteps.ts` and uses the browser's built-in Popover API for the menu.
+
+Copy the component files into your project:
+
+```
+components/
+  Overflow/              # Shared algorithm (required)
+    overflowSteps.ts
+  NoFrameworkOverflow/   # Vanilla JS implementation
+    NoFrameworkOverflow.ts
+    noframework.css
+    index.ts
+```
+
+Import the CSS files in your app entry point:
+
+```ts
+import './components/Overflow/Overflow.css';
+import './components/NoFrameworkOverflow/noframework.css';
+```
+
+## Quick Start
+
+```ts
+import { OverflowToolbar } from './components/NoFrameworkOverflow';
+```
+
+### 1. Write the HTML
+
+The toolbar is a `<ul>` with `<li>` children. Use `data-` attributes to configure overflow behavior:
+
+```html
+<ul id="toolbar" style="gap: 8px;">
+  <!-- Menu: [data-overflow-role="menu"] -->
+  <li data-overflow-role="menu">
+    <button class="nf-btn" data-menu-trigger>⋯</button>
+    <div class="nf-menu-panel" data-menu-panel>
+      <button class="nf-menu-item" data-menuid="format">Format</button>
+      <button class="nf-menu-item" data-menuid="filter">Filters</button>
+    </div>
+  </li>
+
+  <!-- Toolbar items: [data-overflow-role="item"] -->
+  <li data-overflow-role="item" data-menuid="format">
+    <button class="nf-btn">Format</button>
+  </li>
+  <li data-overflow-role="item" data-menuid="filter">
+    <button class="nf-btn">Filters</button>
+  </li>
+</ul>
+```
+
+### 2. Instantiate
+
+```ts
+const ul = document.getElementById('toolbar') as HTMLUListElement;
+const toolbar = new OverflowToolbar(ul);
+```
+
+### 3. Cleanup
+
+```ts
+toolbar.destroy(); // removes ResizeObserver + restores DOM
+```
+
+> Resize the dashed container in any of the examples below to see the overflow behavior in action.
+
+## Features
+
+### Min State
+
+Before an item is fully hidden, it can shrink to a fixed width — typically just showing its icon. Set `data-min-state-width` on the `<li>` to enable this.
+
+<Canvas of={NoFrameworkOverflowStories.MinState} />
+
+```html
+<li data-overflow-role="item" data-menuid="format" data-min-state-width="2.25rem">
+  <button class="nf-btn">
+    <svg><!-- icon --></svg>
+    Format
+  </button>
+</li>
+```
+
+When the container is too narrow for the full label but wide enough for the icon, the item enters its **min state** — the text is hidden via `font-size: 0` and the element is constrained to the configured width. The `data-state` attribute changes to `"min"` and the class `overflow-item-min` is applied.
+
+### Compact Mode
+
+With `compact`, items collapse **one at a time** from the end, giving a smoother progressive experience.
+
+<Canvas of={NoFrameworkOverflowStories.Compact} />
+
+```ts
+new OverflowToolbar(ul, { compact: true });
+```
+
+### Menu-Only Items
+
+Items without a `data-menuid` inside `[data-menu-panel]` **always** appear in the menu (useful for Help, About, or dividers). Items without a `data-menuid` outside the menu **always** appear in the toolbar.
+
+<Canvas of={NoFrameworkOverflowStories.MenuOnly} />
+
+```html
+<div class="nf-menu-panel" data-menu-panel>
+  <button class="nf-menu-item" data-menuid="format">Format</button>
+  <!-- Always in menu — no data-menuid -->
+  <div class="nf-separator" role="separator"></div>
+  <button class="nf-menu-item">Help</button>
+  <button class="nf-menu-item">About</button>
+</div>
+```
+
+When menu-only items exist, the menu opener stays visible even if all linked items fit in the toolbar.
+
+### Reverse Mode
+
+Collapses items from the **left** instead of the right. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
+
+<Canvas of={NoFrameworkOverflowStories.Reverse} />
+
+```ts
+new OverflowToolbar(ul, { compact: true, reverse: true });
+```
+
+### Both Sides
+
+Place two overflow toolbars side by side. Each manages its own items independently.
+
+<Canvas of={NoFrameworkOverflowStories.BothSides} />
+
+```html
+<div style="display: flex">
+  <ul id="left" style="min-width: 0;"><!-- ... --></ul>
+  <ul id="right" style="min-width: 0;"><!-- ... --></ul>
+</div>
+```
+
+```ts
+new OverflowToolbar(leftUl, { compact: true, reverse: true });
+new OverflowToolbar(rightUl, { compact: true });
+```
+
+Set `min-width: 0` on each so they share space equally via flexbox.
+
+## Styling
+
+NoFrameworkOverflow ships with `noframework.css` which provides default styles for buttons, menu panels, and menu items. You can use these classes directly or replace them with your own.
+
+| Class | Element |
+|-------|---------|
+| `.nf-btn` | Toolbar button |
+| `.nf-menu-panel` | Popover menu container |
+| `.nf-menu-item` | Item inside the popover menu |
+| `.nf-separator` | Horizontal divider in the menu |
+
+The popover menu uses the native Popover API with CSS animations via `:popover-open`.
+
+### Data Attributes (Configuration)
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-overflow-role="item"` | `<li>` | Marks element as a toolbar item |
+| `data-overflow-role="menu"` | `<li>` | Marks element as the menu container |
+| `data-menuid="..."` | `<li>` or menu child | Links toolbar items to menu counterparts |
+| `data-min-state-width="..."` | `<li>` | CSS width when in min state |
+| `data-menu-trigger` | `<button>` | The menu opener button |
+| `data-menu-panel` | `<div>` | The popover panel |
+
+### Data Attributes (State)
+
+Each `<li>` with a `data-menuid` receives a `data-state` attribute:
+
+| Value | Meaning |
+|-------|---------|
+| `"visible"` | Item is fully visible |
+| `"min"` | Item is in its collapsed min state |
+| `"hidden"` | Item is hidden (moved to menu) |
+
+## API Reference
+
+### `OverflowToolbar`
+
+```ts
+const toolbar = new OverflowToolbar(ul, options?);
+```
+
+**Constructor options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `compact` | `boolean` | `false` | Collapse items one at a time |
+| `reverse` | `boolean` | `false` | Collapse from the left |
+
+**Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `update()` | Re-scan children and restart overflow detection. Call after adding/removing DOM elements. |
+| `destroy()` | Remove ResizeObserver, clean up DOM attributes and classes. |
