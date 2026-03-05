@@ -123,14 +123,19 @@ export class OverflowController {
 
   private onResize(): void {
     const container = this.host.getContainerEl();
-    const { scrollWidth, clientWidth } = container;
-    const next = computeNextSteps(
-      this.appliedSteps,
-      scrollWidth,
-      clientWidth,
-      this.orderedSteps,
-    );
-    if (next !== this.appliedSteps) {
+
+    // Loop until stable — each applyState() mutates the DOM synchronously,
+    // so the next iteration gets updated dimensions.
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { scrollWidth, clientWidth } = container;
+      const next = computeNextSteps(
+        this.appliedSteps,
+        scrollWidth,
+        clientWidth,
+        this.orderedSteps,
+      );
+      if (next === this.appliedSteps) break;
       this.appliedSteps = next;
       this.applyState();
     }

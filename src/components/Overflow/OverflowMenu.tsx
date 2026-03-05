@@ -1,4 +1,4 @@
-import { Children, Fragment, isValidElement, type ReactNode, useEffect, useRef, useState } from 'react';
+import { Children, isValidElement, type ReactNode, useEffect, useRef, useState } from 'react';
 import { useOverflow } from './OverflowContext';
 import type { OverflowItemProps } from './OverflowItem';
 
@@ -9,36 +9,57 @@ export interface RenderMenuProps {
   children: ReactNode;
 }
 
-interface OverflowMenuProps {
+export interface OverflowMenuControlProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+interface OverflowMenuProps extends OverflowMenuControlProps {
   opener: ReactNode;
   children: ReactNode;
   renderMenu: (props: RenderMenuProps) => ReactNode;
 }
 
-function OverflowMenu({ opener, children, renderMenu }: OverflowMenuProps) {
+function OverflowMenu({ opener, children, renderMenu, open: controlledOpen, onOpenChange }: OverflowMenuProps) {
   const { hiddenMap } = useOverflow();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const openerRef = useRef<HTMLLIElement>(null);
-  const open = Boolean(anchorEl);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : Boolean(anchorEl);
 
   const hasHiddenItems = [...hiddenMap.values()].some(s => s === 'hidden');
   const prevHasHidden = useRef(hasHiddenItems);
 
   // Auto-close when no items are fully hidden
   useEffect(() => {
-    if (prevHasHidden.current && !hasHiddenItems) {
+    if (prevHasHidden.current && !hasHiddenItems && open) {
       setAnchorEl(null);
+      onOpenChange?.(false);
     }
     prevHasHidden.current = hasHiddenItems;
-  }, [hasHiddenItems]);
+  }, [hasHiddenItems, open, onOpenChange]);
+
+  // Sync anchorEl when controlled open changes to false
+  useEffect(() => {
+    if (isControlled && !controlledOpen) {
+      setAnchorEl(null);
+    }
+  }, [isControlled, controlledOpen]);
 
   const handleOpen = () => {
     const button = openerRef.current?.firstElementChild as HTMLElement | null;
     setAnchorEl(button ?? openerRef.current);
+    if (!open) {
+      onOpenChange?.(true);
+    }
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    if (!isControlled) {
+      setAnchorEl(null);
+    }
+    onOpenChange?.(false);
   };
 
   // Collect menuid set from children to determine which are "menu-only"
@@ -57,9 +78,9 @@ function OverflowMenu({ opener, children, renderMenu }: OverflowMenuProps) {
   const hasMenuOnlyItems = menuItems.some(({ menuid }) => menuid === undefined);
   const hidden = !hasHiddenItems && !hasMenuOnlyItems;
 
-  const menuChildren = visibleItems.map(({ menuid, content }, i) => (
-    <Fragment key={menuid ?? `menu-item-${i}`}>{content}</Fragment>
-  ));
+  const menuChildren = Children.toArray(
+    visibleItems.map(({ content }) => content)
+  );
 
   return (
     <>

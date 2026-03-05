@@ -1,4 +1,4 @@
-import { Children, Fragment, forwardRef, isValidElement, type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { Children, Fragment, forwardRef, isValidElement, type ReactNode, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import './Overflow.css';
 import OverflowContext from './OverflowContext';
 import { type AppliedStep, buildOrderedSteps, computeNextSteps, deriveHiddenMap } from './overflowSteps';
@@ -61,9 +61,25 @@ const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({
     return buildOrderedSteps(orderedIds, inMenuIds, minWidthMenuIds);
   }, [resolvedChildren, reverse]);
 
-  const onResize = useCallback((scrollWidth: number, clientWidth: number) => {
-    setAppliedSteps(prev => computeNextSteps(prev, scrollWidth, clientWidth, orderedSteps));
-  }, [orderedSteps]);
+  // Measure and collapse/expand after each render until stable.
+  // useLayoutEffect runs synchronously after DOM mutations but before paint,
+  // so all collapsing settles in one frame — no intermediate flicker.
+  useLayoutEffect(() => {
+    const element = listRef.current;
+    if (!element) return;
+    setAppliedSteps(prev =>
+      computeNextSteps(prev, element.scrollWidth, element.clientWidth, orderedSteps)
+    );
+  }, [appliedSteps, orderedSteps, listRef]);
+
+  // Re-measure when the container is externally resized (window resize, parent layout change)
+  const onResize = () => {
+    const element = listRef.current;
+    if (!element) return;
+    setAppliedSteps(prev =>
+      computeNextSteps(prev, element.scrollWidth, element.clientWidth, orderedSteps)
+    );
+  };
 
   useResizer(listRef, onResize);
 

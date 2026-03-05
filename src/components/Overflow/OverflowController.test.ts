@@ -56,11 +56,11 @@ function createHost(opts: {
   menuFirst?: boolean;
   compact?: boolean;
   reverse?: boolean;
-  scrollWidth?: number;
+  scrollWidth?: number | (() => number);
   clientWidth?: number;
 }): OverflowHost & {
   container: HTMLElement;
-  setDimensions(sw: number, cw: number): void;
+  setDimensions(sw: number | (() => number), cw: number): void;
   scanResult: ScanResult;
 } {
   const container = el('ul');
@@ -69,7 +69,7 @@ function createHost(opts: {
 
   // Override readonly properties
   Object.defineProperty(container, 'scrollWidth', {
-    get: () => scrollWidth,
+    get: () => typeof scrollWidth === 'function' ? scrollWidth() : scrollWidth,
     configurable: true,
   });
   Object.defineProperty(container, 'clientWidth', {
@@ -90,7 +90,7 @@ function createHost(opts: {
     scanChildren: () => scanResult,
     isCompact: () => opts.compact ?? false,
     isReverse: () => opts.reverse ?? false,
-    setDimensions(sw: number, cw: number) {
+    setDimensions(sw: number | (() => number), cw: number) {
       scrollWidth = sw;
       clientWidth = cw;
     },
@@ -177,18 +177,29 @@ describe('OverflowController', () => {
       const item1 = mockItem('btn1', '2.25rem');
       const item2 = mockItem('btn2', '2.25rem');
       const menu = mockMenu(['btn1', 'btn2']);
+      // Each item is 100px wide, min state saves 60px.
+      // 550 - 60 = 490 < 500 → stops after one min step.
       const host = createHost({
         items: [item1, item2],
         menu,
-        scrollWidth: 550,
+        scrollWidth: () => {
+          const minCount = [item1, item2].filter(
+            i => i.el.getAttribute('data-state') === 'min'
+          ).length;
+          const hiddenCount = [item1, item2].filter(
+            i => i.el.style.display === 'none'
+          ).length;
+          return 550 - minCount * 60 - hiddenCount * 100;
+        },
         clientWidth: 500,
       });
 
       const ctrl = new OverflowController(host);
       ctrl.connect();
 
-      // First step: btn1 goes to min
+      // First step: btn1 goes to min, overflow resolves
       expect(item1.el.getAttribute('data-state')).toBe('min');
+      expect(item2.el.getAttribute('data-state')).toBe('visible');
 
       ctrl.disconnect();
     });
@@ -197,10 +208,16 @@ describe('OverflowController', () => {
       const item1 = mockItem('btn1');
       const item2 = mockItem('btn2');
       const menu = mockMenu(['btn1', 'btn2']);
+      // Hiding one item (100px) resolves overflow: 550 - 100 = 450 < 500
       const host = createHost({
         items: [item1, item2],
         menu,
-        scrollWidth: 550,
+        scrollWidth: () => {
+          const hiddenCount = [item1, item2].filter(
+            i => i.el.style.display === 'none'
+          ).length;
+          return 550 - hiddenCount * 100;
+        },
         clientWidth: 500,
       });
 
@@ -210,6 +227,8 @@ describe('OverflowController', () => {
       // No minStateWidth, so first step is hidden
       expect(item1.el.getAttribute('data-state')).toBe('hidden');
       expect(item1.el.style.display).toBe('none');
+      // Only one item hidden — overflow resolved
+      expect(item2.el.getAttribute('data-state')).toBe('visible');
 
       ctrl.disconnect();
     });
@@ -241,7 +260,7 @@ describe('OverflowController', () => {
       const host = createHost({
         items: [item1],
         menu,
-        scrollWidth: 550,
+        scrollWidth: () => item1.el.style.display === 'none' ? 400 : 550,
         clientWidth: 500,
       });
 
@@ -297,7 +316,7 @@ describe('OverflowController', () => {
       const host = createHost({
         items: [item1],
         menu,
-        scrollWidth: 550,
+        scrollWidth: () => item1.el.style.display === 'none' ? 400 : 550,
         clientWidth: 500,
       });
 
@@ -357,13 +376,26 @@ describe('OverflowController', () => {
   });
 
   describe('min-state styles', () => {
+    function dynamicScrollWidth(items: ScannedItem[], base: number) {
+      return () => {
+        const minCount = items.filter(
+          i => i.el.getAttribute('data-state') === 'min'
+        ).length;
+        const hiddenCount = items.filter(
+          i => i.el.style.display === 'none'
+        ).length;
+        return base - minCount * 60 - hiddenCount * 100;
+      };
+    }
+
     it('applies min-state styles to button when item is in min state', () => {
       const item1 = mockItem('btn1', '2.25rem');
       const menu = mockMenu(['btn1']);
+      // 550 - 60 (min) = 490 < 500 → stops at min
       const host = createHost({
         items: [item1],
         menu,
-        scrollWidth: 550,
+        scrollWidth: dynamicScrollWidth([item1], 550),
         clientWidth: 500,
       });
 
@@ -384,7 +416,7 @@ describe('OverflowController', () => {
       const host = createHost({
         items: [item1],
         menu,
-        scrollWidth: 550,
+        scrollWidth: dynamicScrollWidth([item1], 550),
         clientWidth: 500,
       });
 
@@ -402,7 +434,7 @@ describe('OverflowController', () => {
       const host = createHost({
         items: [item1],
         menu,
-        scrollWidth: 550,
+        scrollWidth: dynamicScrollWidth([item1], 550),
         clientWidth: 500,
       });
 
@@ -411,6 +443,63 @@ describe('OverflowController', () => {
 
       expect(item1.el.style.getPropertyValue('max-width')).toBe('3rem');
       expect(item1.el.style.getPropertyValue('overflow')).toBe('hidden');
+
+      ctrl.disconnect();
+    });
+  });
+
+  describe('onResize loop', () => {
+    it('collapses multiple items in a single connect when all overflow', () => {
+      const item1 = mockItem('btn1');
+      const item2 = mockItem('btn2');
+      const item3 = mockItem('btn3');
+      const items = [item1, item2, item3];
+      const menu = mockMenu(['btn1', 'btn2', 'btn3']);
+
+      // Each hidden item reduces scrollWidth by 150px
+      // 950 → 800 → 650 → 500. All three steps fire (950,800,650 all > 500).
+      const host = createHost({
+        items,
+        menu,
+        scrollWidth: () => {
+          const hiddenCount = items.filter(i => i.el.style.display === 'none').length;
+          return 950 - hiddenCount * 150;
+        },
+        clientWidth: 500,
+      });
+
+      const ctrl = new OverflowController(host);
+      ctrl.connect();
+
+      expect(item1.el.getAttribute('data-state')).toBe('hidden');
+      expect(item2.el.getAttribute('data-state')).toBe('hidden');
+      expect(item3.el.getAttribute('data-state')).toBe('hidden');
+
+      ctrl.disconnect();
+    });
+
+    it('stops collapsing when overflow is resolved', () => {
+      const item1 = mockItem('btn1');
+      const item2 = mockItem('btn2');
+      const items = [item1, item2];
+      const menu = mockMenu(['btn1', 'btn2']);
+
+      // Hiding one item is enough (600 - 150 = 450 < 500)
+      const host = createHost({
+        items,
+        menu,
+        scrollWidth: () => {
+          const hiddenCount = items.filter(i => i.el.style.display === 'none').length;
+          return 600 - hiddenCount * 150;
+        },
+        clientWidth: 500,
+      });
+
+      const ctrl = new OverflowController(host);
+      ctrl.connect();
+
+      expect(item1.el.getAttribute('data-state')).toBe('hidden');
+      expect(item2.el.getAttribute('data-state')).toBe('visible');
 
       ctrl.disconnect();
     });
@@ -445,7 +534,7 @@ describe('OverflowController', () => {
       const host = createHost({
         items: [item1],
         menu,
-        scrollWidth: 550,
+        scrollWidth: () => item1.el.style.display === 'none' ? 400 : 550,
         clientWidth: 500,
       });
 

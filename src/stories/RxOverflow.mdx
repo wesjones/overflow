@@ -267,3 +267,26 @@ li[data-state="min"] button {
 |------|------|---------|-------------|
 | `children` | `ReactNode` | — | Menu items (shown when linked toolbar items overflow) |
 | `opener` | `ReactNode` | — | The element that triggers the menu (e.g. a button) |
+| `open` | `boolean` | — | Controlled open state. When provided, you manage open/close. |
+| `onOpenChange` | `(open: boolean) => void` | — | Called when the menu opens or closes. Use alone for notifications, or with `open` for full control. |
+
+#### Controlled Menu
+
+By default, the menu manages its own open/close state. To control it programmatically, pass `open` and `onOpenChange`:
+
+```tsx
+const [menuOpen, setMenuOpen] = useState(false);
+
+<RxOverflowMenu
+  opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}
+  open={menuOpen}
+  onOpenChange={setMenuOpen}
+>
+  <RxOverflowItem menuid="format">
+    <button className="rx-menu-item">Format</button>
+  </RxOverflowItem>
+</RxOverflowMenu>
+
+// Close programmatically from anywhere:
+setMenuOpen(false);
+```

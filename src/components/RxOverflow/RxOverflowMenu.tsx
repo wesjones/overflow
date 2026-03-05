@@ -1,13 +1,13 @@
 import * as Popover from '@radix-ui/react-popover';
 import { type ReactNode, useRef } from 'react';
-import { OverflowMenu, type RenderMenuProps } from '../Overflow';
+import { OverflowMenu, type OverflowMenuControlProps, type RenderMenuProps } from '../Overflow';
 
-interface RxOverflowMenuProps {
+interface RxOverflowMenuProps extends OverflowMenuControlProps {
   opener: ReactNode;
   children: ReactNode;
 }
 
-function RxOverflowMenu({ opener, children }: RxOverflowMenuProps) {
+function RxOverflowMenu({ opener, children, open, onOpenChange }: RxOverflowMenuProps) {
   const renderMenu = ({ anchorEl, open, onClose, children: menuChildren }: RenderMenuProps) => (
     <RxPopoverMenu anchorEl={anchorEl} open={open} onClose={onClose}>
       {menuChildren}
@@ -15,7 +15,7 @@ function RxOverflowMenu({ opener, children }: RxOverflowMenuProps) {
   );
 
   return (
-    <OverflowMenu opener={opener} renderMenu={renderMenu}>
+    <OverflowMenu opener={opener} renderMenu={renderMenu} open={open} onOpenChange={onOpenChange}>
       {children}
     </OverflowMenu>
   );

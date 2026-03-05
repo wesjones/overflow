@@ -141,10 +141,31 @@ Wraps each toolbar item. Place matching items in both the toolbar and the menu, 
 
 The dropdown menu container. Must include an `opener` element (the trigger button).
 
-| Prop | Type | Description |
-|---|---|---|
-| `children` | `ReactNode` | Menu items |
-| `opener` | `ReactNode` | The button that opens the menu |
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `children` | `ReactNode` | — | Menu items |
+| `opener` | `ReactNode` | — | The button that opens the menu |
+| `open` | `boolean` | — | Controlled open state. When provided, you manage open/close. |
+| `onOpenChange` | `(open: boolean) => void` | — | Called when the menu opens or closes. Use alone for notifications, or with `open` for full control. |
+
+#### Controlled Menu
+
+By default, the menu manages its own open/close state. To control it programmatically, pass `open` and `onOpenChange`:
+
+```tsx
+const [menuOpen, setMenuOpen] = useState(false);
+
+<RxOverflowMenu
+  opener={<button>More</button>}
+  open={menuOpen}
+  onOpenChange={setMenuOpen}
+>
+  {/* items */}
+</RxOverflowMenu>
+
+// Close programmatically from anywhere:
+setMenuOpen(false);
+```
 
 ### `OverflowController`
 
