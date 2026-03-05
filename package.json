@@ -1,6 +1,6 @@
 {
   "name": "overflow-toolbar",
-  "version": "0.1.1",
+  "version": "0.1.7",
   "type": "module",
   "description": "Responsive toolbar overflow component — items automatically collapse into a dropdown menu as the container shrinks. Supports visible, icon-only (min), and hidden states. Ships with React (Radix UI), MUI, and vanilla JS implementations.",
   "license": "MIT",
@@ -51,6 +51,7 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
+    "styles.d.ts",
     "README.md",
     "LICENSE"
   ],
@@ -60,27 +61,41 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./core": {
       "types": "./dist/components/Overflow/index.d.ts",
-      "import": "./dist/components/Overflow/index.js"
+      "import": "./dist/overflow.js",
+      "default": "./dist/overflow.js"
     },
     "./rx": {
       "types": "./dist/components/RxOverflow/index.d.ts",
-      "import": "./dist/components/RxOverflow/index.js"
+      "import": "./dist/rx.js",
+      "default": "./dist/rx.js"
     },
     "./mui": {
       "types": "./dist/components/MuiOverflow/index.d.ts",
-      "import": "./dist/components/MuiOverflow/index.js"
+      "import": "./dist/mui.js",
+      "default": "./dist/mui.js"
     },
     "./vanilla": {
       "types": "./dist/components/NoFrameworkOverflow/index.d.ts",
-      "import": "./dist/components/NoFrameworkOverflow/index.js"
+      "import": "./dist/vanilla.js",
+      "default": "./dist/vanilla.js"
     },
-    "./styles": "./dist/components/Overflow/Overflow.css",
-    "./rx/styles": "./dist/components/RxOverflow/rx.css",
-    "./vanilla/styles": "./dist/components/NoFrameworkOverflow/noframework.css"
+    "./styles": {
+      "types": "./styles.d.ts",
+      "default": "./dist/components/Overflow/Overflow.css"
+    },
+    "./rx/styles": {
+      "types": "./styles.d.ts",
+      "default": "./dist/components/RxOverflow/rx.css"
+    },
+    "./vanilla/styles": {
+      "types": "./styles.d.ts",
+      "default": "./dist/components/NoFrameworkOverflow/noframework.css"
+    }
   },
   "packageManager": "pnpm@10.5.0",
   "scripts": {
@@ -94,7 +109,16 @@
     "test": "vitest",
     "test:unit": "vitest run --project unit",
     "test:coverage": "vitest run --project unit --coverage",
-    "typecheck": "tsc -p tsconfig.build.json --noEmit"
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "prepublishOnly": "pnpm run build:lib && pnpm run test:unit",
+    "release:patch": "npm version patch && npm publish --access public",
+    "release:minor": "npm version minor && npm publish --access public",
+    "release:major": "npm version major && npm publish --access public",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^3.0.0"
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
@@ -102,10 +126,8 @@
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.0",
     "@radix-ui/react-popover": "^1.0.0",
-    "clsx": "^2.0.0",
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "tailwind-merge": "^3.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
     "@emotion/react": {
@@ -121,12 +143,6 @@
       "optional": true
     },
     "@radix-ui/react-popover": {
-      "optional": true
-    },
-    "clsx": {
-      "optional": true
-    },
-    "tailwind-merge": {
       "optional": true
     }
   },
@@ -155,6 +171,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-storybook": "^10.2.14",
     "globals": "^16.5.0",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "lucide-react": "^0.576.0",
     "playwright": "^1.58.2",

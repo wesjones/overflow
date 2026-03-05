@@ -9,7 +9,7 @@ interface MuiOverflowMenuProps {
 
 function MuiOverflowMenu({ opener, children }: MuiOverflowMenuProps) {
   const renderMenu = ({ anchorEl, open, onClose, children: menuChildren }: RenderMenuProps) => (
-    <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
+    <Menu anchorEl={anchorEl} open={open} onClose={onClose} onClick={onClose}>
       {menuChildren}
     </Menu>
   );

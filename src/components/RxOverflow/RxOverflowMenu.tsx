@@ -44,6 +44,7 @@ function RxPopoverMenu({ anchorEl, open, onClose, children }: RenderMenuProps) {
           className="rx-menu-panel"
           sideOffset={4}
           align="start"
+          onClick={onClose}
         >
           {children}
         </Popover.Content>

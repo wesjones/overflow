@@ -89,6 +89,28 @@ Items are linked between the toolbar and the menu using a shared **`menuid`**. W
 
 > Resize the dashed container in any of the examples below to see the overflow behavior in action.
 
+## Important: No Wrapper Elements
+
+`RxOverflowItem` and `RxOverflowMenu` **must** be direct children of `RxOverflow`. Do not wrap them in `<div>`, `<span>`, layout components, or any other intermediate elements.
+
+The overflow engine scans immediate children for internal role markers to measure, track, and transition items between states. Wrapper elements break this scan, causing items to never collapse, never appear in the menu, or fail to transition between visible/min/hidden states.
+
+```tsx
+{/* WRONG — wrapper breaks overflow behavior */}
+<RxOverflow>
+  <div className="group">
+    <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
+    <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+  </div>
+</RxOverflow>
+
+{/* CORRECT — items are direct children */}
+<RxOverflow>
+  <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
+  <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+</RxOverflow>
+```
+
 ## Features
 
 ### Min State

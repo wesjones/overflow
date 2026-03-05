@@ -156,6 +156,30 @@ Framework-agnostic controller class for building custom implementations.
 | `disconnect()` | Stop observing and clear all applied styles/attributes |
 | `update()` | Re-scan children and restart (call after DOM changes) |
 
+## Important: No Wrapper Elements
+
+`OverflowItem` and `OverflowMenu` components **must** be direct children of the `Overflow` container. Do not wrap them in `<div>`, `<span>`, layout components, or any other intermediate elements.
+
+The overflow engine scans immediate children for internal role markers to measure, track, and transition items between states. Wrapper elements break this scan, causing items to never collapse, never appear in the menu, or fail to transition between visible/min/hidden states.
+
+```tsx
+{/* WRONG — wrapper breaks overflow behavior */}
+<RxOverflow>
+  <div className="group">
+    <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
+    <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+  </div>
+</RxOverflow>
+
+{/* CORRECT — items are direct children */}
+<RxOverflow>
+  <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
+  <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+</RxOverflow>
+```
+
+The same rule applies to the vanilla JS variant — `<li>` elements with `data-overflow-role` must be direct children of the `<ul>` container.
+
 ## Modes
 
 ### Compact Mode

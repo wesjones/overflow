@@ -94,6 +94,28 @@ Items are linked between the toolbar and the menu using a shared **`menuid`**. W
 
 > Resize the dashed container in any of the examples below to see the overflow behavior in action.
 
+## Important: No Wrapper Elements
+
+`MuiOverflowItem` and `MuiOverflowMenu` **must** be direct children of `MuiOverflow`. Do not wrap them in `<div>`, `<Box>`, layout components, or any other intermediate elements.
+
+The overflow engine scans immediate children for internal role markers to measure, track, and transition items between states. Wrapper elements break this scan, causing items to never collapse, never appear in the menu, or fail to transition between visible/min/hidden states.
+
+```tsx
+{/* WRONG — wrapper breaks overflow behavior */}
+<MuiOverflow>
+  <Box>
+    <MuiOverflowItem menuid="a"><Button>A</Button></MuiOverflowItem>
+    <MuiOverflowItem menuid="b"><Button>B</Button></MuiOverflowItem>
+  </Box>
+</MuiOverflow>
+
+{/* CORRECT — items are direct children */}
+<MuiOverflow>
+  <MuiOverflowItem menuid="a"><Button>A</Button></MuiOverflowItem>
+  <MuiOverflowItem menuid="b"><Button>B</Button></MuiOverflowItem>
+</MuiOverflow>
+```
+
 ## Features
 
 ### Min State

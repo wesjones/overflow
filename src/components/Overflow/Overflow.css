@@ -1,21 +1,3 @@
-div:has(> .overflow) {
-  justify-content: space-between;
-  gap: 1px;
-  .overflow {
-    > :not([data-state='hidden']):first-child,
-    > [data-state='hidden']:first-child + :not([data-state='hidden']) {
-      margin-left: auto;
-      margin-right: 0;
-    }
-    &.overflow-reverse {
-      > :not([data-state='hidden']):first-child,
-      > [data-state='hidden']:first-child + :not([data-state='hidden']) {
-        margin-left: 0;
-        margin-right: auto;
-      }
-    }
-  }
-}
 .overflow {
   --u: 8px;
   --u1: calc(var(--u) * 1);
@@ -41,6 +23,11 @@ div:has(> .overflow) {
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+  > :not([data-state='hidden']):first-child,
+  > [data-state='hidden']:first-child + :not([data-state='hidden']) {
+    margin-left: auto;
+    margin-right: 0;
   }
   > li.overflow-opener {
     margin-left: auto;
@@ -72,6 +59,11 @@ div:has(> .overflow) {
   margin-right: auto;
   flex-direction: row-reverse;
 
+  > :not([data-state='hidden']):first-child,
+  > [data-state='hidden']:first-child + :not([data-state='hidden']) {
+    margin-left: 0;
+    margin-right: auto;
+  }
   > li.overflow-opener {
     margin-left: 0;
     margin-right: auto;
