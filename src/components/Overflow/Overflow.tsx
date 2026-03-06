@@ -37,7 +37,7 @@ const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({
   ), [children]);
 
   // Build ordered steps by scanning resolved children using overflowRole markers
-  const { orderedSteps, inMenuIds } = useMemo(() => {
+  const { orderedSteps, inMenuIds, minWidthMenuIds } = useMemo(() => {
     const menuIds: string[] = [];
     const inMenuIds = new Set<string>();
     const minWidthMenuIds = new Set<string>();
@@ -73,6 +73,7 @@ const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({
     return {
       orderedSteps: buildOrderedSteps(orderedIds, inMenuIds, minWidthMenuIds),
       inMenuIds,
+      minWidthMenuIds,
     };
   }, [resolvedChildren]);
 
@@ -98,7 +99,7 @@ const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({
 
   useResizer(listRef, onResize);
 
-  const hiddenMap = useMemo(() => deriveHiddenMap(appliedSteps, snap, inMenuIds), [appliedSteps, snap, inMenuIds]);
+  const hiddenMap = useMemo(() => deriveHiddenMap(appliedSteps, snap, inMenuIds, minWidthMenuIds), [appliedSteps, snap, inMenuIds, minWidthMenuIds]);
 
   const ctxValue = useMemo(
     () => ({ hiddenMap }),

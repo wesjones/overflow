@@ -181,7 +181,20 @@ describe('deriveHiddenMap with snap', () => {
     ]));
   });
 
-  it('does not expand min state (CSS handles min snap)', () => {
+  it('expands min to all minWidthMenuIds when snap is true and any step is min', () => {
+    const steps: AppliedStep[] = [
+      { menuId: 'btn1', step: 'min', width: 400 },
+    ];
+
+    const result = deriveHiddenMap(steps, true, new Set(['btn1', 'btn2']), new Set(['btn1', 'btn2']));
+
+    expect(result).toEqual(new Map([
+      ['btn1', 'min'],
+      ['btn2', 'min'],
+    ]));
+  });
+
+  it('does not expand min when minWidthMenuIds is not provided', () => {
     const steps: AppliedStep[] = [
       { menuId: 'btn1', step: 'min', width: 400 },
     ];
@@ -200,7 +213,7 @@ describe('deriveHiddenMap with snap', () => {
       { menuId: 'btn1', step: 'hidden', width: 350 },
     ];
 
-    const result = deriveHiddenMap(steps, true, new Set(['btn1', 'btn2', 'btn3']));
+    const result = deriveHiddenMap(steps, true, new Set(['btn1', 'btn2', 'btn3']), new Set(['btn1', 'btn2']));
 
     expect(result).toEqual(new Map([
       ['btn1', 'hidden'],
@@ -209,13 +222,13 @@ describe('deriveHiddenMap with snap', () => {
     ]));
   });
 
-  it('does not expand hidden when no step is hidden', () => {
+  it('does not expand hidden when no step is hidden (only min snap)', () => {
     const steps: AppliedStep[] = [
       { menuId: 'btn1', step: 'min', width: 400 },
       { menuId: 'btn2', step: 'min', width: 380 },
     ];
 
-    const result = deriveHiddenMap(steps, true, new Set(['btn1', 'btn2']));
+    const result = deriveHiddenMap(steps, true, new Set(['btn1', 'btn2']), new Set(['btn1', 'btn2']));
 
     expect(result).toEqual(new Map([
       ['btn1', 'min'],

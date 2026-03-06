@@ -65,6 +65,7 @@ export class OverflowController {
   private host: OverflowHost;
   private orderedSteps: Step[] = [];
   private appliedSteps: AppliedStep[] = [];
+  private minWidthMenuIds = new Set<string>();
   private ro: ResizeObserver | null = null;
   private lastScan: ScanResult = { items: [], menu: null, menuFirst: false };
 
@@ -113,6 +114,7 @@ export class OverflowController {
     }
 
     const inMenuIds = this.lastScan.menu?.inMenuIds ?? new Set<string>();
+    this.minWidthMenuIds = minWidthMenuIds;
     this.orderedSteps = buildOrderedSteps(menuIds, inMenuIds, minWidthMenuIds);
   }
 
@@ -150,6 +152,7 @@ export class OverflowController {
       this.appliedSteps,
       isSnap,
       this.lastScan.menu?.inMenuIds,
+      this.minWidthMenuIds,
     );
     const container = this.host.getContainerEl();
     container.style.setProperty('--hiddenCount', String(this.appliedSteps.length));

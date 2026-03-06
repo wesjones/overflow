@@ -63,25 +63,33 @@ export function computeNextSteps(
  * Derive the hiddenMap from appliedSteps.
  * Later steps for the same menuId overwrite earlier ones (e.g., min → hidden).
  *
- * When `snap` is true, hidden state is expanded: if any item is 'hidden',
- * all menuIds in `inMenuIds` are also set to 'hidden'. Min state snap is
- * handled purely via CSS (`.overflow-snap:has(> [data-state="min"])`).
+ * When `snap` is true, states are expanded:
+ * - If any item is 'min', all items in `minWidthMenuIds` are set to 'min'.
+ * - If any item is 'hidden', all items in `inMenuIds` are set to 'hidden'.
  */
 export function deriveHiddenMap(
   appliedSteps: AppliedStep[],
   snap?: boolean,
   inMenuIds?: Set<string>,
+  minWidthMenuIds?: Set<string>,
 ): Map<string, 'min' | 'hidden'> {
   const map = new Map<string, 'min' | 'hidden'>();
   for (const { menuId, step } of appliedSteps) {
     map.set(menuId, step);
   }
-  if (snap && inMenuIds) {
+  if (snap) {
+    let hasMin = false;
     let hasHidden = false;
     for (const v of map.values()) {
-      if (v === 'hidden') { hasHidden = true; break; }
+      if (v === 'min') hasMin = true;
+      if (v === 'hidden') hasHidden = true;
     }
-    if (hasHidden) {
+    if (hasMin && minWidthMenuIds) {
+      for (const id of minWidthMenuIds) {
+        if (!map.has(id)) map.set(id, 'min');
+      }
+    }
+    if (hasHidden && inMenuIds) {
       for (const id of inMenuIds) {
         map.set(id, 'hidden');
       }
