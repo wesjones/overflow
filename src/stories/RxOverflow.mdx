@@ -63,25 +63,25 @@ Every overflow toolbar has three parts:
 2. **`RxOverflowItem`** — each toolbar item
 3. **`RxOverflowMenu`** — the dropdown that collects hidden items
 
-Items are linked between the toolbar and the menu using a shared **`menuid`**. When a toolbar item overflows, the menu item with the same `menuid` appears in the dropdown.
+Items are linked between the toolbar and the menu using a shared **`menuId`**. When a toolbar item overflows, the menu item with the same `menuId` appears in the dropdown.
 
 ```tsx
 <RxOverflow style={{ gap: 8 }}>
   {/* Menu definition — items here appear when their toolbar counterpart overflows */}
   <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
-    <RxOverflowItem menuid="format">
+    <RxOverflowItem menuId="format">
       <button className="rx-menu-item"><AlignLeft size={14} /> Format</button>
     </RxOverflowItem>
-    <RxOverflowItem menuid="filter">
+    <RxOverflowItem menuId="filter">
       <button className="rx-menu-item"><Workflow size={14} /> Filters</button>
     </RxOverflowItem>
   </RxOverflowMenu>
 
   {/* Toolbar items — these are visible when there's enough room */}
-  <RxOverflowItem menuid="format">
+  <RxOverflowItem menuId="format">
     <button className="rx-btn"><AlignLeft size={16} /> Format</button>
   </RxOverflowItem>
-  <RxOverflowItem menuid="filter">
+  <RxOverflowItem menuId="filter">
     <button className="rx-btn"><Workflow size={16} /> Filters</button>
   </RxOverflowItem>
 </RxOverflow>
@@ -99,15 +99,15 @@ The overflow engine scans immediate children for internal role markers to measur
 {/* WRONG — wrapper breaks overflow behavior */}
 <RxOverflow>
   <div className="group">
-    <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
-    <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+    <RxOverflowItem menuId="a"><button>A</button></RxOverflowItem>
+    <RxOverflowItem menuId="b"><button>B</button></RxOverflowItem>
   </div>
 </RxOverflow>
 
 {/* CORRECT — items are direct children */}
 <RxOverflow>
-  <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
-  <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+  <RxOverflowItem menuId="a"><button>A</button></RxOverflowItem>
+  <RxOverflowItem menuId="b"><button>B</button></RxOverflowItem>
 </RxOverflow>
 ```
 
@@ -120,7 +120,7 @@ Before an item is fully hidden, it can shrink to a fixed width — typically jus
 <Canvas of={RxOverflowStories.MinState} />
 
 ```tsx
-<RxOverflowItem menuid="format" minStateWidth="2.25rem">
+<RxOverflowItem menuId="format" minStateWidth="2.25rem">
   <button className="rx-btn">
     <AlignLeft size={16} />
     Format
@@ -137,6 +137,36 @@ When the container is too narrow for the full label but wide enough for the icon
 }
 ```
 
+### Snap Mode (Recommended)
+
+When `snap` is enabled, state transitions are synchronized across all items. Instead of items collapsing one at a time, all items with a `minStateWidth` snap to their min state together, and all hideable items move to the menu together.
+
+**Snap is often the preferred choice for toolbars.** Without snap, items collapse individually — some show only an icon while others still display icon + text. This creates an unintended visual hierarchy where items at the same level of importance appear to have different levels of prominence. With snap, all items stay in the same visual state, preserving the equal importance of each action.
+
+<Canvas of={RxOverflowStories.Snap} />
+
+```tsx
+<RxOverflow snap style={{ gap: 8 }}>
+  <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
+    <RxOverflowItem menuId="format">
+      <button className="rx-menu-item">Format</button>
+    </RxOverflowItem>
+    <RxOverflowItem menuId="filter">
+      <button className="rx-menu-item">Filters</button>
+    </RxOverflowItem>
+  </RxOverflowMenu>
+
+  <RxOverflowItem menuId="format" minStateWidth="2.25rem">
+    <button className="rx-btn"><AlignLeft size={16} /> Format</button>
+  </RxOverflowItem>
+  <RxOverflowItem menuId="filter" minStateWidth="2.25rem">
+    <button className="rx-btn"><Workflow size={16} /> Filters</button>
+  </RxOverflowItem>
+</RxOverflow>
+```
+
+Min-state snap is driven by CSS using `:has()` — when any item enters `data-state="min"`, a CSS rule cascades the min visual to all `[data-can-min]` items. Hidden-state snap is handled by the overflow engine to keep the menu in sync.
+
 ### Compact Mode
 
 By default, all items collapse at the same breakpoint. With `compact`, items collapse **one at a time** from the end, giving a smoother progressive experience.
@@ -151,17 +181,17 @@ By default, all items collapse at the same breakpoint. With `compact`, items col
 
 ### Menu-Only Items
 
-Items without a `menuid` are not linked to any toolbar counterpart. If they are inside `RxOverflowMenu`, they **always** appear in the menu (useful for Help, About, or dividers). If they are outside the menu, they **always** appear in the toolbar.
+Items without a `menuId` are not linked to any toolbar counterpart. If they are inside `RxOverflowMenu`, they **always** appear in the menu (useful for Help, About, or dividers). If they are outside the menu, they **always** appear in the toolbar.
 
 <Canvas of={RxOverflowStories.MenuOnly} />
 
 ```tsx
 <RxOverflowMenu opener={<button className="rx-btn"><MoreHorizontal size={16} /></button>}>
-  <RxOverflowItem menuid="format">
+  <RxOverflowItem menuId="format">
     <button className="rx-menu-item">Format</button>
   </RxOverflowItem>
 
-  {/* Always in menu — no menuid */}
+  {/* Always in menu — no menuId */}
   <RxOverflowItem>
     <div className="rx-separator" role="separator" />
   </RxOverflowItem>
@@ -178,7 +208,7 @@ When menu-only items exist, the menu opener button stays visible even if all lin
 
 ### Reverse Mode
 
-Collapses items from the **left** instead of the right. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
+Collapses items from the **right** instead of the left. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
 
 <Canvas of={RxOverflowStories.Reverse} />
 
@@ -225,7 +255,7 @@ The popover menu has enter/exit animations defined as CSS keyframes (`popover-in
 
 ### Data Attributes
 
-Each `RxOverflowItem` with a `menuid` renders a `<li>` with a `data-state` attribute:
+Each `RxOverflowItem` with a `menuId` renders a `<li>` with a `data-state` attribute:
 
 | Value | Meaning |
 |-------|---------|
@@ -250,6 +280,7 @@ li[data-state="min"] button {
 | `children` | `ReactNode` | — | Overflow items and menu |
 | `compact` | `boolean` | `false` | Collapse items one at a time |
 | `reverse` | `boolean` | `false` | Collapse from the left |
+| `snap` | `boolean` | `false` | Synchronize state transitions across all items |
 | `className` | `string` | — | Additional CSS class |
 | `style` | `CSSProperties` | — | Inline styles |
 
@@ -258,7 +289,7 @@ li[data-state="min"] button {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | — | Item content |
-| `menuid` | `string` | — | Links toolbar and menu items. Omit for always-visible or menu-only items. |
+| `menuId` | `string` | — | Links toolbar and menu items. Omit for always-visible or menu-only items. |
 | `minStateWidth` | `string` | — | CSS width when in min state (e.g. `"2.25rem"`) |
 
 ### `RxOverflowMenu`
@@ -282,7 +313,7 @@ const [menuOpen, setMenuOpen] = useState(false);
   open={menuOpen}
   onOpenChange={setMenuOpen}
 >
-  <RxOverflowItem menuid="format">
+  <RxOverflowItem menuId="format">
     <button className="rx-menu-item">Format</button>
   </RxOverflowItem>
 </RxOverflowMenu>

@@ -5,7 +5,9 @@ export function useResizer(
   onResize: () => void
 ) {
   const callbackRef = useRef(onResize);
-  callbackRef.current = onResize;
+  useEffect(() => {
+    callbackRef.current = onResize;
+  });
 
   useEffect(() => {
     const element = ref.current;

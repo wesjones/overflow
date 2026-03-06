@@ -1,5 +1,5 @@
 import * as Popover from '@radix-ui/react-popover';
-import { type ReactNode, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { OverflowMenu, type OverflowMenuControlProps, type RenderMenuProps } from '../Overflow';
 
 interface RxOverflowMenuProps extends OverflowMenuControlProps {
@@ -21,20 +21,21 @@ function RxOverflowMenu({ opener, children, open, onOpenChange }: RxOverflowMenu
   );
 }
 
-export default Object.assign(RxOverflowMenu, { overflowRole: 'menu' as const });
+RxOverflowMenu.overflowRole = 'menu' as const;
+export default RxOverflowMenu;
 
 function RxPopoverMenu({ anchorEl, open, onClose, children }: RenderMenuProps) {
   const virtualRef = useRef<{ getBoundingClientRect: () => DOMRect }>({
     getBoundingClientRect: () => new DOMRect(),
   });
 
-  // Update synchronously during render so the popover positions correctly
-  // on the same frame it opens (useEffect would be one frame too late).
-  if (anchorEl) {
-    virtualRef.current = {
-      getBoundingClientRect: () => anchorEl.getBoundingClientRect(),
-    };
-  }
+  useEffect(() => {
+    if (anchorEl) {
+      virtualRef.current = {
+        getBoundingClientRect: () => anchorEl.getBoundingClientRect(),
+      };
+    }
+  }, [anchorEl]);
 
   return (
     <Popover.Root open={open} onOpenChange={(o) => { if (!o) onClose(); }}>

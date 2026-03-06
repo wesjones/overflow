@@ -17,13 +17,13 @@ function el(tag = 'li'): HTMLElement {
 }
 
 function mockItem(
-  menuid?: string,
+  menuId?: string,
   minStateWidth?: string,
 ): ScannedItem {
   const itemEl = el('li');
   const buttonEl = el('button');
   itemEl.appendChild(buttonEl);
-  return { el: itemEl, buttonEl, menuid, minStateWidth };
+  return { el: itemEl, buttonEl, menuId, minStateWidth };
 }
 
 function mockMenu(
@@ -34,11 +34,11 @@ function mockMenu(
   const triggerEl = el('button');
   const menuItemEls = inMenuIds.map((id) => {
     const mi = el('div');
-    mi.dataset.menuid = id;
+    mi.dataset.menuId = id;
     return mi;
   });
   if (hasMenuOnlyItems) {
-    menuItemEls.push(el('div')); // no menuid = menu-only
+    menuItemEls.push(el('div')); // no menuId = menu-only
   }
   return {
     el: menuEl,
@@ -56,6 +56,7 @@ function createHost(opts: {
   menuFirst?: boolean;
   compact?: boolean;
   reverse?: boolean;
+  snap?: boolean;
   scrollWidth?: number | (() => number);
   clientWidth?: number;
 }): OverflowHost & {
@@ -90,6 +91,7 @@ function createHost(opts: {
     scanChildren: () => scanResult,
     isCompact: () => opts.compact ?? false,
     isReverse: () => opts.reverse ?? false,
+    isSnap: () => opts.snap ?? false,
     setDimensions(sw: number | (() => number), cw: number) {
       scrollWidth = sw;
       clientWidth = cw;
@@ -102,9 +104,10 @@ function createHost(opts: {
 let observedElements: Set<Element>;
 
 class MockResizeObserver {
-  constructor(_cb: ResizeObserverCallback) {
-    // callback stored but not used — controller calls onResize() internally
-  }
+  // callback stored but not used — controller calls onResize() internally
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(cb: ResizeObserverCallback) {}
+
   observe(target: Element) {
     observedElements.add(target);
   }
@@ -502,6 +505,114 @@ describe('OverflowController', () => {
       expect(item2.el.getAttribute('data-state')).toBe('visible');
 
       ctrl.disconnect();
+    });
+  });
+
+  describe('snap mode', () => {
+    it('snap min: CSS handles min cascade via data-can-min attribute', () => {
+      const item1 = mockItem('btn1', '2.25rem');
+      const item2 = mockItem('btn2', '3rem');
+      const menu = mockMenu(['btn1', 'btn2']);
+      const host = createHost({
+        items: [item1, item2],
+        menu,
+        scrollWidth: 400,
+        clientWidth: 500,
+      });
+
+      const ctrl = new OverflowController(host);
+      ctrl.connect();
+
+      // Items with minStateWidth get data-can-min attribute and --min-state-width CSS var
+      expect(item1.el.hasAttribute('data-can-min')).toBe(true);
+      expect(item1.el.style.getPropertyValue('--min-state-width')).toBe('2.25rem');
+      expect(item2.el.hasAttribute('data-can-min')).toBe(true);
+      expect(item2.el.style.getPropertyValue('--min-state-width')).toBe('3rem');
+
+      ctrl.disconnect();
+    });
+
+    it('snap hidden: all hideable items hidden when any one overflows', () => {
+      const item1 = mockItem('btn1');
+      const item2 = mockItem('btn2');
+      const item3 = mockItem('btn3');
+      const items = [item1, item2, item3];
+      const menu = mockMenu(['btn1', 'btn2', 'btn3']);
+
+      // 550 total, each hidden saves ~50, clientWidth 500.
+      // First step hides btn1 (550-50=500, still overflows at ===).
+      // With snap=true, deriveHiddenMap expands to hide all 3.
+      // After hiding all 3: 550 - 3*50 = 400 < 500, resolved.
+      const host = createHost({
+        items,
+        menu,
+        snap: true,
+        scrollWidth: () => {
+          const hiddenCount = items.filter(i => i.el.style.display === 'none').length;
+          return 550 - hiddenCount * 50;
+        },
+        clientWidth: 500,
+      });
+
+      const ctrl = new OverflowController(host);
+      ctrl.connect();
+
+      expect(item1.el.getAttribute('data-state')).toBe('hidden');
+      expect(item2.el.getAttribute('data-state')).toBe('hidden');
+      expect(item3.el.getAttribute('data-state')).toBe('hidden');
+
+      ctrl.disconnect();
+    });
+
+    it('snap hidden: menu shows all items when snap hides them', () => {
+      const item1 = mockItem('btn1');
+      const item2 = mockItem('btn2');
+      const item3 = mockItem('btn3');
+      const items = [item1, item2, item3];
+      const menu = mockMenu(['btn1', 'btn2', 'btn3']);
+
+      const host = createHost({
+        items,
+        menu,
+        snap: true,
+        scrollWidth: () => {
+          const hiddenCount = items.filter(i => i.el.style.display === 'none').length;
+          return 550 - hiddenCount * 50;
+        },
+        clientWidth: 500,
+      });
+
+      const ctrl = new OverflowController(host);
+      ctrl.connect();
+
+      // All menu item elements should be visible (display '' not 'none')
+      for (const mi of menu.menuItemEls) {
+        expect(mi.style.display).toBe('');
+      }
+
+      ctrl.disconnect();
+    });
+
+    it('clears data-can-min and --min-state-width on disconnect', () => {
+      const item1 = mockItem('btn1', '2.25rem');
+      const menu = mockMenu(['btn1']);
+      const host = createHost({
+        items: [item1],
+        menu,
+        scrollWidth: 400,
+        clientWidth: 500,
+      });
+
+      const ctrl = new OverflowController(host);
+      ctrl.connect();
+
+      expect(item1.el.hasAttribute('data-can-min')).toBe(true);
+      expect(item1.el.style.getPropertyValue('--min-state-width')).toBe('2.25rem');
+
+      ctrl.disconnect();
+
+      expect(item1.el.hasAttribute('data-can-min')).toBe(false);
+      expect(item1.el.style.getPropertyValue('--min-state-width')).toBe('');
     });
   });
 

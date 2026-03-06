@@ -1,6 +1,6 @@
 {
   "name": "overflow-toolbar",
-  "version": "0.1.8",
+  "version": "0.2.1",
   "type": "module",
   "description": "Responsive toolbar overflow component — items automatically collapse into a dropdown menu as the container shrinks. Supports visible, icon-only (min), and hidden states. Ships with React (Radix UI), MUI, and vanilla JS implementations.",
   "license": "MIT",
@@ -51,7 +51,6 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "styles.d.ts",
     "README.md",
     "LICENSE"
   ],
@@ -83,18 +82,6 @@
       "types": "./dist/components/NoFrameworkOverflow/index.d.ts",
       "import": "./dist/vanilla.js",
       "default": "./dist/vanilla.js"
-    },
-    "./styles": {
-      "types": "./styles.d.ts",
-      "default": "./dist/components/Overflow/Overflow.css"
-    },
-    "./rx/styles": {
-      "types": "./styles.d.ts",
-      "default": "./dist/components/RxOverflow/rx.css"
-    },
-    "./vanilla/styles": {
-      "types": "./styles.d.ts",
-      "default": "./dist/components/NoFrameworkOverflow/noframework.css"
     }
   },
   "packageManager": "pnpm@10.5.0",
@@ -167,6 +154,7 @@
     "@vitest/coverage-v8": "^4.0.18",
     "clsx": "^2.1.1",
     "eslint": "^9.39.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-storybook": "^10.2.14",

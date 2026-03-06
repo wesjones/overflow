@@ -1,5 +1,5 @@
 export interface Step {
-  menuid: string;
+  menuId: string;
   step: 'min' | 'hidden';
 }
 
@@ -9,9 +9,9 @@ export interface AppliedStep extends Step {
 
 /**
  * Build the ordered collapse sequence.
- * All min steps come first (in menuid order), then all hidden steps (in menuid order).
- * A menuid only gets a min step if it has a minStateWidth.
- * A menuid only gets a hidden step if it's represented in the menu.
+ * All min steps come first (in menuId order), then all hidden steps (in menuId order).
+ * A menuId only gets a min step if it has a minStateWidth.
+ * A menuId only gets a hidden step if it's represented in the menu.
  */
 export function buildOrderedSteps(
   menuIds: string[],
@@ -19,14 +19,14 @@ export function buildOrderedSteps(
   minWidthMenuIds: Set<string>,
 ): Step[] {
   const steps: Step[] = [];
-  for (const menuid of menuIds) {
-    if (minWidthMenuIds.has(menuid)) {
-      steps.push({ menuid, step: 'min' });
+  for (const menuId of menuIds) {
+    if (minWidthMenuIds.has(menuId)) {
+      steps.push({ menuId, step: 'min' });
     }
   }
-  for (const menuid of menuIds) {
-    if (inMenuIds.has(menuid)) {
-      steps.push({ menuid, step: 'hidden' });
+  for (const menuId of menuIds) {
+    if (inMenuIds.has(menuId)) {
+      steps.push({ menuId, step: 'hidden' });
     }
   }
   return steps;
@@ -61,12 +61,31 @@ export function computeNextSteps(
 
 /**
  * Derive the hiddenMap from appliedSteps.
- * Later steps for the same menuid overwrite earlier ones (e.g., min → hidden).
+ * Later steps for the same menuId overwrite earlier ones (e.g., min → hidden).
+ *
+ * When `snap` is true, hidden state is expanded: if any item is 'hidden',
+ * all menuIds in `inMenuIds` are also set to 'hidden'. Min state snap is
+ * handled purely via CSS (`.overflow-snap:has(> [data-state="min"])`).
  */
-export function deriveHiddenMap(appliedSteps: AppliedStep[]): Map<string, 'min' | 'hidden'> {
+export function deriveHiddenMap(
+  appliedSteps: AppliedStep[],
+  snap?: boolean,
+  inMenuIds?: Set<string>,
+): Map<string, 'min' | 'hidden'> {
   const map = new Map<string, 'min' | 'hidden'>();
-  for (const { menuid, step } of appliedSteps) {
-    map.set(menuid, step);
+  for (const { menuId, step } of appliedSteps) {
+    map.set(menuId, step);
+  }
+  if (snap && inMenuIds) {
+    let hasHidden = false;
+    for (const v of map.values()) {
+      if (v === 'hidden') { hasHidden = true; break; }
+    }
+    if (hasHidden) {
+      for (const id of inMenuIds) {
+        map.set(id, 'hidden');
+      }
+    }
   }
   return map;
 }

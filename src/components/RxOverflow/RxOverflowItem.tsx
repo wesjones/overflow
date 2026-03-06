@@ -3,16 +3,17 @@ import { OverflowItem } from '../Overflow';
 
 interface RxOverflowItemProps {
   children: ReactNode;
-  menuid?: string;
+  menuId?: string;
   minStateWidth?: string;
 }
 
-function RxOverflowItem({ children, menuid, minStateWidth }: RxOverflowItemProps) {
+function RxOverflowItem({ children, menuId, minStateWidth }: RxOverflowItemProps) {
   return (
-    <OverflowItem menuid={menuid} minStateWidth={minStateWidth}>
+    <OverflowItem menuId={menuId} minStateWidth={minStateWidth}>
       {children}
     </OverflowItem>
   );
 }
 
-export default Object.assign(RxOverflowItem, { overflowRole: 'item' as const });
+RxOverflowItem.overflowRole = 'item' as const;
+export default RxOverflowItem;

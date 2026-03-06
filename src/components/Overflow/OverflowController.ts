@@ -11,7 +11,7 @@ import {
 export interface ScannedItem {
   el: HTMLElement;
   buttonEl: HTMLElement | null;
-  menuid: string | undefined;
+  menuId: string | undefined;
   minStateWidth: string | undefined;
 }
 
@@ -35,6 +35,7 @@ export interface OverflowHost {
   scanChildren(): ScanResult;
   isCompact(): boolean;
   isReverse(): boolean;
+  isSnap(): boolean;
 }
 
 /* ── Shared style constants (kebab-case for setProperty) ── */
@@ -100,16 +101,19 @@ export class OverflowController {
     const minWidthMenuIds = new Set<string>();
 
     for (const item of this.lastScan.items) {
-      if (item.menuid) {
-        menuIds.push(item.menuid);
-        if (item.minStateWidth) minWidthMenuIds.add(item.menuid);
+      if (item.menuId) {
+        menuIds.push(item.menuId);
+        if (item.minStateWidth) minWidthMenuIds.add(item.menuId);
+      }
+      // Set CSS custom properties for snap targeting
+      if (item.minStateWidth) {
+        item.el.style.setProperty('--min-state-width', item.minStateWidth);
+        item.el.setAttribute('data-can-min', '');
       }
     }
 
     const inMenuIds = this.lastScan.menu?.inMenuIds ?? new Set<string>();
-    const isReverse = this.host.isReverse();
-    const ids = isReverse ? [...menuIds].reverse() : menuIds;
-    this.orderedSteps = buildOrderedSteps(ids, inMenuIds, minWidthMenuIds);
+    this.orderedSteps = buildOrderedSteps(menuIds, inMenuIds, minWidthMenuIds);
   }
 
   private startObserver(): void {
@@ -126,7 +130,6 @@ export class OverflowController {
 
     // Loop until stable — each applyState() mutates the DOM synchronously,
     // so the next iteration gets updated dimensions.
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const { scrollWidth, clientWidth } = container;
       const next = computeNextSteps(
@@ -142,7 +145,12 @@ export class OverflowController {
   }
 
   private applyState(): void {
-    const hiddenMap = deriveHiddenMap(this.appliedSteps);
+    const isSnap = this.host.isSnap();
+    const hiddenMap = deriveHiddenMap(
+      this.appliedSteps,
+      isSnap,
+      this.lastScan.menu?.inMenuIds,
+    );
     const container = this.host.getContainerEl();
     container.style.setProperty('--hiddenCount', String(this.appliedSteps.length));
 
@@ -154,8 +162,8 @@ export class OverflowController {
 
     // Apply item states
     for (const item of this.lastScan.items) {
-      const state = item.menuid
-        ? (hiddenMap.get(item.menuid) ?? 'visible')
+      const state = item.menuId
+        ? (hiddenMap.get(item.menuId) ?? 'visible')
         : 'visible';
 
       item.el.setAttribute('data-state', state);
@@ -203,6 +211,10 @@ export class OverflowController {
     menu.el.style.setProperty('display', showOpener ? '' : 'none');
     menu.el.setAttribute('data-state', showOpener ? 'visible' : 'hidden');
 
+    // ARIA attributes on the trigger
+    menu.triggerEl.setAttribute('aria-haspopup', 'menu');
+    menu.triggerEl.setAttribute('aria-expanded', String(showOpener));
+
     // Opener trigger styles (icon-only display)
     if (showOpener) {
       this.applyMinStyles(menu.triggerEl);
@@ -212,7 +224,7 @@ export class OverflowController {
 
     // Show/hide individual menu items
     for (const mi of menu.menuItemEls) {
-      const mid = mi.getAttribute('menuid') ?? mi.dataset.menuid;
+      const mid = mi.dataset.menuId;
       if (!mid) {
         // Menu-only item — always visible
         mi.style.removeProperty('display');
@@ -308,9 +320,11 @@ export class OverflowController {
 
     for (const item of this.lastScan.items) {
       item.el.removeAttribute('data-state');
+      item.el.removeAttribute('data-can-min');
       item.el.style.removeProperty('display');
       item.el.style.removeProperty('max-width');
       item.el.style.removeProperty('overflow');
+      item.el.style.removeProperty('--min-state-width');
       this.clearMinStyles(item.buttonEl);
       if (item.buttonEl) {
         for (const prop of CORNER_PROPS) {
@@ -323,6 +337,8 @@ export class OverflowController {
     if (menu) {
       menu.el.removeAttribute('data-state');
       menu.el.style.removeProperty('display');
+      menu.triggerEl.removeAttribute('aria-haspopup');
+      menu.triggerEl.removeAttribute('aria-expanded');
       this.clearMinStyles(menu.triggerEl);
       for (const prop of CORNER_PROPS) {
         menu.triggerEl.style.removeProperty(prop);

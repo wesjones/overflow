@@ -1,18 +1,30 @@
 import { Children, Fragment, forwardRef, isValidElement, type ReactNode, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import './Overflow.css';
 import OverflowContext from './OverflowContext';
 import { type AppliedStep, buildOrderedSteps, computeNextSteps, deriveHiddenMap } from './overflowSteps';
 import { useResizer } from './useResizer';
 
-export interface OverflowProps {
-  children: ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-  compact?: boolean;
-  reverse?: boolean;
+/** Shared type for components that declare an overflowRole ('item' | 'menu'). */
+interface OverflowRoleComponent {
+  overflowRole?: 'item' | 'menu';
 }
 
-const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({ children, className, style, compact, reverse }, ref) {
+/** Props for the Overflow container component. */
+export interface OverflowProps {
+  /** OverflowItem and OverflowMenu components. Must be direct children (no wrapper elements). */
+  children: ReactNode;
+  /** CSS class name for the container `<ul>`. */
+  className?: string;
+  /** Inline styles for the container `<ul>`. */
+  style?: React.CSSProperties;
+  /** When true, items collapse one at a time with tight spacing and grouped corners. */
+  compact?: boolean;
+  /** When true, items collapse from the right instead of the left. */
+  reverse?: boolean;
+  /** When true, all items with a `minStateWidth` snap to min state together, and all hideable items snap to hidden together. */
+  snap?: boolean;
+}
+
+const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({ children, className, style, compact, reverse, snap }, ref) {
   const [appliedSteps, setAppliedSteps] = useState<AppliedStep[]>([]);
   const internalRef = useRef<HTMLUListElement | null>(null);
   const listRef = (ref ?? internalRef) as React.RefObject<HTMLUListElement | null>;
@@ -25,41 +37,44 @@ const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({
   ), [children]);
 
   // Build ordered steps by scanning resolved children using overflowRole markers
-  const orderedSteps = useMemo(() => {
+  const { orderedSteps, inMenuIds } = useMemo(() => {
     const menuIds: string[] = [];
     const inMenuIds = new Set<string>();
     const minWidthMenuIds = new Set<string>();
 
-    // Scan resolved children: collect menuids, detect which are in an OverflowMenu
+    // Scan resolved children: collect menuIds, detect which are in an OverflowMenu
     Children.forEach(resolvedChildren, (child) => {
-      if (!isValidElement<{ menuid?: string; children?: ReactNode; minStateWidth?: string }>(child)) return;
+      if (!isValidElement<{ menuId?: string; children?: ReactNode; minStateWidth?: string }>(child)) return;
 
-      const role = (child.type as { overflowRole?: string }).overflowRole;
+      const role = (child.type as OverflowRoleComponent).overflowRole;
 
       if (role === 'menu') {
-        // Scan OverflowMenu children for menuids that have menu representation
+        // Scan OverflowMenu children for menuIds that have menu representation
         Children.forEach(child.props.children, (menuChild) => {
-          if (!isValidElement<{ menuid?: string }>(menuChild)) return;
-          if (menuChild.props.menuid) {
-            inMenuIds.add(menuChild.props.menuid);
-            if (!menuIds.includes(menuChild.props.menuid)) {
-              menuIds.push(menuChild.props.menuid);
+          if (!isValidElement<{ menuId?: string }>(menuChild)) return;
+          if (menuChild.props.menuId) {
+            inMenuIds.add(menuChild.props.menuId);
+            if (!menuIds.includes(menuChild.props.menuId)) {
+              menuIds.push(menuChild.props.menuId);
             }
           }
         });
-      } else if (role === 'item' && child.props.menuid) {
-        if (!menuIds.includes(child.props.menuid)) {
-          menuIds.push(child.props.menuid);
+      } else if (role === 'item' && child.props.menuId) {
+        if (!menuIds.includes(child.props.menuId)) {
+          menuIds.push(child.props.menuId);
         }
         if (child.props.minStateWidth !== undefined) {
-          minWidthMenuIds.add(child.props.menuid);
+          minWidthMenuIds.add(child.props.menuId);
         }
       }
     });
 
-    const orderedIds = reverse ? [...menuIds].reverse() : menuIds;
-    return buildOrderedSteps(orderedIds, inMenuIds, minWidthMenuIds);
-  }, [resolvedChildren, reverse]);
+    const orderedIds = menuIds;
+    return {
+      orderedSteps: buildOrderedSteps(orderedIds, inMenuIds, minWidthMenuIds),
+      inMenuIds,
+    };
+  }, [resolvedChildren]);
 
   // Measure and collapse/expand after each render until stable.
   // useLayoutEffect runs synchronously after DOM mutations but before paint,
@@ -83,14 +98,14 @@ const Overflow = forwardRef<HTMLUListElement, OverflowProps>(function Overflow({
 
   useResizer(listRef, onResize);
 
-  const hiddenMap = useMemo(() => deriveHiddenMap(appliedSteps), [appliedSteps]);
+  const hiddenMap = useMemo(() => deriveHiddenMap(appliedSteps, snap, inMenuIds), [appliedSteps, snap, inMenuIds]);
 
   const ctxValue = useMemo(
     () => ({ hiddenMap }),
     [hiddenMap],
   );
 
-  const classNames = ['overflow', compact && 'overflow-compact', reverse && 'overflow-reverse', className].filter(Boolean).join(' ');
+  const classNames = ['overflow', compact && 'overflow-compact', reverse && 'overflow-reverse', snap && 'overflow-snap', className].filter(Boolean).join(' ');
 
   return (
     <OverflowContext value={ctxValue}>

@@ -9,22 +9,26 @@ import {
 export interface OverflowToolbarOptions {
   compact?: boolean;
   reverse?: boolean;
+  snap?: boolean;
 }
 
 export class OverflowToolbar implements OverflowHost {
   private ul: HTMLUListElement;
   private compact: boolean;
   private reverse: boolean;
+  private snap: boolean;
   private controller: OverflowController;
 
   constructor(ul: HTMLUListElement, opts: OverflowToolbarOptions = {}) {
     this.ul = ul;
     this.compact = opts.compact ?? false;
     this.reverse = opts.reverse ?? false;
+    this.snap = opts.snap ?? false;
 
     this.ul.classList.add('overflow');
     if (this.compact) this.ul.classList.add('overflow-compact');
     if (this.reverse) this.ul.classList.add('overflow-reverse');
+    if (this.snap) this.ul.classList.add('overflow-snap');
 
     this.controller = new OverflowController(this);
     this.controller.connect();
@@ -38,7 +42,7 @@ export class OverflowToolbar implements OverflowHost {
   /** Tear down ResizeObserver and clean up DOM state. */
   destroy(): void {
     this.controller.disconnect();
-    this.ul.classList.remove('overflow', 'overflow-compact', 'overflow-reverse');
+    this.ul.classList.remove('overflow', 'overflow-compact', 'overflow-reverse', 'overflow-snap');
   }
 
   /* ── OverflowHost ─────────────────────────────────────── */
@@ -53,6 +57,10 @@ export class OverflowToolbar implements OverflowHost {
 
   isReverse(): boolean {
     return this.reverse;
+  }
+
+  isSnap(): boolean {
+    return this.snap;
   }
 
   scanChildren(): ScanResult {
@@ -71,7 +79,7 @@ export class OverflowToolbar implements OverflowHost {
         items.push({
           el: child,
           buttonEl: child.querySelector('button'),
-          menuid: child.dataset.menuid || undefined,
+          menuId: child.dataset.menuId || undefined,
           minStateWidth: child.dataset.minStateWidth || undefined,
         });
       }
@@ -90,7 +98,7 @@ export class OverflowToolbar implements OverflowHost {
           const inMenuIds = new Set<string>();
           let hasMenuOnlyItems = false;
           for (const mi of menuItemEls) {
-            const mid = mi.dataset.menuid;
+            const mid = mi.dataset.menuId;
             if (mid) {
               inMenuIds.add(mid);
             } else {

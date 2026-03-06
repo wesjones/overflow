@@ -21,4 +21,5 @@ function MuiOverflowMenu({ opener, children, open, onOpenChange }: MuiOverflowMe
   );
 }
 
-export default Object.assign(MuiOverflowMenu, { overflowRole: 'menu' as const });
+MuiOverflowMenu.overflowRole = 'menu' as const;
+export default MuiOverflowMenu;

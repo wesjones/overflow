@@ -7,14 +7,18 @@
 
 A responsive toolbar overflow component that automatically collapses items into a dropdown menu as the container shrinks. Items transition through three states: **visible** → **min** (icon-only) → **hidden** (moved to menu).
 
-<a href="https://wesjones.github.io/overflow/" target="_blank"><strong>Live Demo</strong></a>
+<p align="center">
+  <a href="https://wesjones.github.io/overflow/">
+    <img src="./assets/live-demo.svg" alt="Live Demo" />
+  </a>
+</p>
 
 ## Features
 
 - **Automatic overflow detection** — items collapse into a menu as the container narrows using ResizeObserver
 - **Three item states** — visible, min (icon-only), and hidden (in menu)
 - **Compact mode** — items collapse one at a time instead of all at once
-- **Reverse mode** — collapse from the left instead of the right
+- **Reverse mode** — collapse from the right instead of the left
 - **Menu-only items** — items that always live in the dropdown (e.g. Help, About)
 - **Min state** — items shrink to icon-only before being fully hidden
 - **Three implementations** — React/Radix UI (shadcn-compatible), Material UI, and vanilla JavaScript
@@ -27,23 +31,33 @@ A responsive toolbar overflow component that automatically collapses items into 
 npm install overflow-toolbar
 ```
 
+or
+
+```bash
+pnpm add overflow-toolbar
+```
+
+or
+
+```bash
+yarn add overflow-toolbar
+```
+
 ## Quick Start
 
 ### Radix UI / shadcn (React)
 
 ```tsx
 import { RxOverflow, RxOverflowItem, RxOverflowMenu } from 'overflow-toolbar/rx';
-import 'overflow-toolbar/rx/styles';
-import 'overflow-toolbar/styles';
 
 <RxOverflow style={{ gap: 8 }}>
   <RxOverflowMenu opener={<button>More</button>}>
-    <RxOverflowItem menuid="format"><button>Format</button></RxOverflowItem>
-    <RxOverflowItem menuid="filter"><button>Filters</button></RxOverflowItem>
+    <RxOverflowItem menuId="format"><button>Format</button></RxOverflowItem>
+    <RxOverflowItem menuId="filter"><button>Filters</button></RxOverflowItem>
   </RxOverflowMenu>
 
-  <RxOverflowItem menuid="format"><button>Format</button></RxOverflowItem>
-  <RxOverflowItem menuid="filter"><button>Filters</button></RxOverflowItem>
+  <RxOverflowItem menuId="format"><button>Format</button></RxOverflowItem>
+  <RxOverflowItem menuId="filter"><button>Filters</button></RxOverflowItem>
 </RxOverflow>
 ```
 
@@ -51,17 +65,16 @@ import 'overflow-toolbar/styles';
 
 ```tsx
 import { MuiOverflow, MuiOverflowItem, MuiOverflowMenu } from 'overflow-toolbar/mui';
-import 'overflow-toolbar/styles';
 import { Button, MenuItem } from '@mui/material';
 
 <MuiOverflow sx={{ gap: 1 }}>
   <MuiOverflowMenu opener={<Button>More</Button>}>
-    <MuiOverflowItem menuid="format"><MenuItem>Format</MenuItem></MuiOverflowItem>
-    <MuiOverflowItem menuid="filter"><MenuItem>Filters</MenuItem></MuiOverflowItem>
+    <MuiOverflowItem menuId="format"><MenuItem>Format</MenuItem></MuiOverflowItem>
+    <MuiOverflowItem menuId="filter"><MenuItem>Filters</MenuItem></MuiOverflowItem>
   </MuiOverflowMenu>
 
-  <MuiOverflowItem menuid="format"><Button>Format</Button></MuiOverflowItem>
-  <MuiOverflowItem menuid="filter"><Button>Filters</Button></MuiOverflowItem>
+  <MuiOverflowItem menuId="format"><Button>Format</Button></MuiOverflowItem>
+  <MuiOverflowItem menuId="filter"><Button>Filters</Button></MuiOverflowItem>
 </MuiOverflow>
 ```
 
@@ -69,8 +82,6 @@ import { Button, MenuItem } from '@mui/material';
 
 ```js
 import { OverflowToolbar } from 'overflow-toolbar/vanilla';
-import 'overflow-toolbar/vanilla/styles';
-import 'overflow-toolbar/styles';
 
 const ul = document.querySelector('#my-toolbar');
 const toolbar = new OverflowToolbar(ul);
@@ -84,14 +95,14 @@ const toolbar = new OverflowToolbar(ul);
   <li data-overflow-role="menu">
     <button data-menu-trigger>More</button>
     <div data-menu-panel>
-      <button data-menuid="format">Format</button>
-      <button data-menuid="filter">Filters</button>
+      <button data-menu-id="format">Format</button>
+      <button data-menu-id="filter">Filters</button>
     </div>
   </li>
-  <li data-overflow-role="item" data-menuid="format">
+  <li data-overflow-role="item" data-menu-id="format">
     <button>Format</button>
   </li>
-  <li data-overflow-role="item" data-menuid="filter">
+  <li data-overflow-role="item" data-menu-id="filter">
     <button>Filters</button>
   </li>
 </ul>
@@ -108,9 +119,8 @@ Import only what you need for optimal tree-shaking:
 | `overflow-toolbar/rx` | Radix UI / shadcn variant (`RxOverflow`, `RxOverflowItem`, `RxOverflowMenu`) |
 | `overflow-toolbar/mui` | Material UI variant (`MuiOverflow`, `MuiOverflowItem`, `MuiOverflowMenu`) |
 | `overflow-toolbar/vanilla` | Vanilla JS (`OverflowToolbar`) |
-| `overflow-toolbar/styles` | Core CSS (required by all variants) |
-| `overflow-toolbar/rx/styles` | Radix UI styles |
-| `overflow-toolbar/vanilla/styles` | Vanilla JS styles |
+
+CSS is included automatically when you import any subpath — no separate style imports needed.
 
 ## API
 
@@ -122,19 +132,19 @@ The container component. Wraps toolbar items and the overflow menu.
 |---|---|---|---|
 | `children` | `ReactNode` | — | Overflow items and menu |
 | `compact` | `boolean` | `false` | Collapse items one at a time |
-| `reverse` | `boolean` | `false` | Collapse from the left |
+| `reverse` | `boolean` | `false` | Collapse from the right |
 | `className` | `string` | — | CSS class name |
 | `style` | `CSSProperties` | — | Inline styles |
 | `sx` | `SxProps` | — | MUI system props (MUI only) |
 
 ### `OverflowItem` / `RxOverflowItem` / `MuiOverflowItem`
 
-Wraps each toolbar item. Place matching items in both the toolbar and the menu, linked by `menuid`.
+Wraps each toolbar item. Place matching items in both the toolbar and the menu, linked by `menuId`.
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `children` | `ReactNode` | — | Item content |
-| `menuid` | `string` | — | Links toolbar item to its menu counterpart |
+| `menuId` | `string` | — | Links toolbar item to its menu counterpart |
 | `minStateWidth` | `string` \| `number` | — | Width in min state (`string` for Rx, `number` for MUI spacing units) |
 
 ### `OverflowMenu` / `RxOverflowMenu` / `MuiOverflowMenu`
@@ -187,15 +197,15 @@ The overflow engine scans immediate children for internal role markers to measur
 {/* WRONG — wrapper breaks overflow behavior */}
 <RxOverflow>
   <div className="group">
-    <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
-    <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+    <RxOverflowItem menuId="a"><button>A</button></RxOverflowItem>
+    <RxOverflowItem menuId="b"><button>B</button></RxOverflowItem>
   </div>
 </RxOverflow>
 
 {/* CORRECT — items are direct children */}
 <RxOverflow>
-  <RxOverflowItem menuid="a"><button>A</button></RxOverflowItem>
-  <RxOverflowItem menuid="b"><button>B</button></RxOverflowItem>
+  <RxOverflowItem menuId="a"><button>A</button></RxOverflowItem>
+  <RxOverflowItem menuId="b"><button>B</button></RxOverflowItem>
 </RxOverflow>
 ```
 
@@ -215,7 +225,7 @@ Items collapse one at a time with tight spacing. Adjacent buttons get squared-of
 
 ### Reverse Mode
 
-Items collapse from the left side first instead of the right:
+Items collapse from the right side first instead of the left:
 
 ```tsx
 <RxOverflow reverse>
@@ -228,7 +238,7 @@ Items collapse from the left side first instead of the right:
 Items shrink to a fixed width (icon-only) before being fully hidden:
 
 ```tsx
-<RxOverflowItem menuid="format" minStateWidth="2.25rem">
+<RxOverflowItem menuId="format" minStateWidth="2.25rem">
   <button><FormatIcon /> Format</button>
 </RxOverflowItem>
 ```
@@ -236,18 +246,18 @@ Items shrink to a fixed width (icon-only) before being fully hidden:
 For MUI, `minStateWidth` accepts a number (theme spacing units):
 
 ```tsx
-<MuiOverflowItem menuid="format" minStateWidth={5}>
+<MuiOverflowItem menuId="format" minStateWidth={5}>
   <Button><FormatIcon /> Format</Button>
 </MuiOverflowItem>
 ```
 
 ### Menu-Only Items
 
-Items without a `menuid` always stay where they are — in the toolbar or in the menu:
+Items without a `menuId` always stay where they are — in the toolbar or in the menu:
 
 ```tsx
 <RxOverflowMenu opener={<button>More</button>}>
-  <RxOverflowItem menuid="format"><button>Format</button></RxOverflowItem>
+  <RxOverflowItem menuId="format"><button>Format</button></RxOverflowItem>
   {/* Always in the menu */}
   <RxOverflowItem><div role="separator" /></RxOverflowItem>
   <RxOverflowItem><button>Help</button></RxOverflowItem>
@@ -262,7 +272,7 @@ The vanilla implementation uses `data-` attributes for configuration:
 |---|---|---|
 | `data-overflow-role="item"` | `<li>` | Marks a toolbar item |
 | `data-overflow-role="menu"` | `<li>` | Marks the menu container |
-| `data-menuid` | `<li>`, menu item | Links toolbar and menu items |
+| `data-menu-id` | `<li>`, menu item | Links toolbar and menu items |
 | `data-min-state-width` | `<li>` | Min-state width (CSS value) |
 | `data-menu-trigger` | `<button>` | The menu open/close button |
 | `data-menu-panel` | `<div>` | The menu panel (uses Popover API) |

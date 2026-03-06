@@ -37,6 +37,21 @@ All three implementations use the same pure algorithm (`overflowSteps.ts`). Resi
 
 ---
 
+## Snap (Recommended)
+
+When `snap` is enabled, state transitions are synchronized: all items with a `minStateWidth` collapse to their min state together, and all hideable items move to the menu together. Snap is often preferred because without it, items collapse individually — some showing only an icon while others still display icon + text — creating an unintended visual hierarchy among items of equal importance.
+
+**RxOverflow**
+<Canvas of={RxStories.Snap} />
+
+**MuiOverflow**
+<Canvas of={MuiStories.Snap} />
+
+**NoFrameworkOverflow**
+<Canvas of={NfStories.Snap} />
+
+---
+
 ## Menu Only
 
 **RxOverflow**

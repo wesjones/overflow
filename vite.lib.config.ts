@@ -1,23 +1,54 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'node:path';
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { resolve, relative, dirname } from 'node:path';
 
-/** Copy CSS files that aren't imported by any JS entry point. */
-function copyCss(): Plugin {
+/**
+ * Vite strips CSS imports from JS in library mode, replacing them with
+ * empty-css comments. This plugin restores them as real
+ * `import './path.css';` statements so consumers' bundlers pick up the CSS.
+ */
+function restoreCssImports(): Plugin {
   return {
-    name: 'copy-css',
-    closeBundle() {
-      const src = resolve(__dirname, 'src/components/NoFrameworkOverflow/noframework.css');
-      const dest = resolve(__dirname, 'dist/components/NoFrameworkOverflow/noframework.css');
-      mkdirSync(resolve(__dirname, 'dist/components/NoFrameworkOverflow'), { recursive: true });
-      copyFileSync(src, dest);
+    name: 'restore-css-imports',
+    enforce: 'post',
+    generateBundle(_, bundle) {
+      const cssFiles = new Set(
+        Object.keys(bundle).filter(f => f.endsWith('.css'))
+      );
+
+      for (const [fileName, chunk] of Object.entries(bundle)) {
+        if (chunk.type !== 'chunk') continue;
+
+        // Match Vite's empty-css comment pattern and extract the original path hint
+        const code = chunk.code.replace(/\/\*\s*empty css\s[^*]*\*\/\n?/g, '');
+        const imports: string[] = [];
+
+        // Use Vite's internal module info to find CSS dependencies
+        if (chunk.viteMetadata) {
+          const meta = chunk.viteMetadata as { importedCss?: Set<string> };
+          if (meta.importedCss) {
+            for (const cssPath of meta.importedCss) {
+              if (cssFiles.has(cssPath)) {
+                const rel = relative(dirname(fileName), cssPath);
+                const importPath = rel.startsWith('.') ? rel : `./${rel}`;
+                imports.push(`import '${importPath}';`);
+              }
+            }
+          }
+        }
+
+        if (imports.length > 0) {
+          chunk.code = imports.join('\n') + '\n' + code;
+        } else {
+          chunk.code = code;
+        }
+      }
     },
   };
 }
 
 export default defineConfig({
-  plugins: [react({ jsxRuntime: 'automatic' }), copyCss()],
+  plugins: [react({ jsxRuntime: 'automatic' }), restoreCssImports()],
   build: {
     lib: {
       formats: ['es'],

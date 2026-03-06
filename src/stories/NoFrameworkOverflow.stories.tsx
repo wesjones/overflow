@@ -21,11 +21,13 @@ function NfWrapper({
   html,
   compact,
   reverse,
+  snap,
   style,
 }: {
   html: string;
   compact?: boolean;
   reverse?: boolean;
+  snap?: boolean;
   style?: React.CSSProperties;
 }) {
   const ref = useRef<HTMLUListElement>(null);
@@ -34,10 +36,10 @@ function NfWrapper({
   useEffect(() => {
     if (!ref.current) return;
     ref.current.innerHTML = html;
-    const tb = new OverflowToolbar(ref.current, { compact, reverse });
+    const tb = new OverflowToolbar(ref.current, { compact, reverse, snap });
     toolbarRef.current = tb;
     return () => tb.destroy();
-  }, [html, compact, reverse]);
+  }, [html, compact, reverse, snap]);
 
   return <ul ref={ref} style={style} />;
 }
@@ -78,18 +80,18 @@ export const Default: Story = {
         <li data-overflow-role="menu">
           <button class="nf-btn" data-menu-trigger>${iconMore}</button>
           <div class="nf-menu-panel" data-menu-panel>
-            <button class="nf-menu-item" data-menuid="btn1">${iconAlign18} Button 1</button>
-            <button class="nf-menu-item" data-menuid="btn2">${iconWorkflow18} Button 2</button>
-            <button class="nf-menu-item" data-menuid="btn3">Button 3</button>
+            <button class="nf-menu-item" data-menu-id="btn1">${iconAlign18} Button 1</button>
+            <button class="nf-menu-item" data-menu-id="btn2">${iconWorkflow18} Button 2</button>
+            <button class="nf-menu-item" data-menu-id="btn3">Button 3</button>
           </div>
         </li>
-        <li data-overflow-role="item" data-menuid="btn1">
+        <li data-overflow-role="item" data-menu-id="btn1">
           <button class="nf-btn">${iconAlign} Button 1</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn2">
+        <li data-overflow-role="item" data-menu-id="btn2">
           <button class="nf-btn">${iconWorkflow} Button 2</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn3">
+        <li data-overflow-role="item" data-menu-id="btn3">
           <button class="nf-btn">Button 3</button>
         </li>
       `}
@@ -105,18 +107,46 @@ export const MinState: Story = {
         <li data-overflow-role="menu">
           <button class="nf-btn" data-menu-trigger>${iconMore}</button>
           <div class="nf-menu-panel" data-menu-panel>
-            <button class="nf-menu-item" data-menuid="btn1">${iconAlign18} Button 1</button>
-            <button class="nf-menu-item" data-menuid="btn2">${iconWorkflow18} Button 2</button>
-            <button class="nf-menu-item" data-menuid="btn3">${iconSettings18} Button 3</button>
+            <button class="nf-menu-item" data-menu-id="btn1">${iconAlign18} Button 1</button>
+            <button class="nf-menu-item" data-menu-id="btn2">${iconWorkflow18} Button 2</button>
+            <button class="nf-menu-item" data-menu-id="btn3">${iconSettings18} Button 3</button>
           </div>
         </li>
-        <li data-overflow-role="item" data-menuid="btn1" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn1" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconAlign} Button 1</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn2" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn2" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconWorkflow} Button 2</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn3" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn3" data-min-state-width="2.25rem">
+          <button class="nf-btn">${iconSettings} Button 3</button>
+        </li>
+      `}
+    />
+  ),
+};
+
+export const Snap: Story = {
+  render: () => (
+    <NfWrapper
+      snap
+      style={{ gap: 8 }}
+      html={`
+        <li data-overflow-role="menu">
+          <button class="nf-btn" data-menu-trigger>${iconMore}</button>
+          <div class="nf-menu-panel" data-menu-panel>
+            <button class="nf-menu-item" data-menu-id="btn1">${iconAlign18} Button 1</button>
+            <button class="nf-menu-item" data-menu-id="btn2">${iconWorkflow18} Button 2</button>
+            <button class="nf-menu-item" data-menu-id="btn3">${iconSettings18} Button 3</button>
+          </div>
+        </li>
+        <li data-overflow-role="item" data-menu-id="btn1" data-min-state-width="2.25rem">
+          <button class="nf-btn">${iconAlign} Button 1</button>
+        </li>
+        <li data-overflow-role="item" data-menu-id="btn2" data-min-state-width="2.25rem">
+          <button class="nf-btn">${iconWorkflow} Button 2</button>
+        </li>
+        <li data-overflow-role="item" data-menu-id="btn3" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconSettings} Button 3</button>
         </li>
       `}
@@ -132,17 +162,17 @@ export const MenuOnly: Story = {
         <li data-overflow-role="menu">
           <button class="nf-btn" data-menu-trigger>${iconMore}</button>
           <div class="nf-menu-panel" data-menu-panel>
-            <button class="nf-menu-item" data-menuid="btn1">${iconAlign18} Button 1</button>
-            <button class="nf-menu-item" data-menuid="btn2">${iconWorkflow18} Button 2</button>
+            <button class="nf-menu-item" data-menu-id="btn1">${iconAlign18} Button 1</button>
+            <button class="nf-menu-item" data-menu-id="btn2">${iconWorkflow18} Button 2</button>
             <div class="nf-separator" role="separator"></div>
             <button class="nf-menu-item">Help</button>
             <button class="nf-menu-item">About</button>
           </div>
         </li>
-        <li data-overflow-role="item" data-menuid="btn1">
+        <li data-overflow-role="item" data-menu-id="btn1">
           <button class="nf-btn">${iconAlign} Button 1</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn2">
+        <li data-overflow-role="item" data-menu-id="btn2">
           <button class="nf-btn">${iconWorkflow} Button 2</button>
         </li>
         <li data-overflow-role="item">
@@ -161,28 +191,28 @@ export const Compact: Story = {
         <li data-overflow-role="menu">
           <button class="nf-btn" data-menu-trigger>${iconMore}</button>
           <div class="nf-menu-panel" data-menu-panel>
-            <button class="nf-menu-item" data-menuid="btn1">${iconAlign18} Button 1</button>
-            <button class="nf-menu-item" data-menuid="btn2">${iconWorkflow18} Button 2</button>
-            <button class="nf-menu-item" data-menuid="btn3">Button 3</button>
-            <button class="nf-menu-item" data-menuid="btn4">${iconSearch18} Search</button>
-            <button class="nf-menu-item" data-menuid="btn5">${iconSettings18} Settings</button>
+            <button class="nf-menu-item" data-menu-id="btn1">${iconAlign18} Button 1</button>
+            <button class="nf-menu-item" data-menu-id="btn2">${iconWorkflow18} Button 2</button>
+            <button class="nf-menu-item" data-menu-id="btn3">Button 3</button>
+            <button class="nf-menu-item" data-menu-id="btn4">${iconSearch18} Search</button>
+            <button class="nf-menu-item" data-menu-id="btn5">${iconSettings18} Settings</button>
             <div class="nf-separator" role="separator"></div>
             <button class="nf-menu-item">Help</button>
           </div>
         </li>
-        <li data-overflow-role="item" data-menuid="btn1" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn1" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconAlign} Button 1</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn2" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn2" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconWorkflow} Button 2</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn3">
+        <li data-overflow-role="item" data-menu-id="btn3">
           <button class="nf-btn">Button 3</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn4" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn4" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconSearch} Search</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn5" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn5" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconSettings} Settings</button>
         </li>
       `}
@@ -201,18 +231,18 @@ export const BothSides: Story = {
           <li data-overflow-role="menu">
             <button class="nf-btn" data-menu-trigger>${iconMore}</button>
             <div class="nf-menu-panel" data-menu-panel>
-              <button class="nf-menu-item" data-menuid="L1">${iconAlign18} Format</button>
-              <button class="nf-menu-item" data-menuid="L2">${iconWorkflow18} Filters</button>
-              <button class="nf-menu-item" data-menuid="L3">${iconSettings18} Views</button>
+              <button class="nf-menu-item" data-menu-id="L1">${iconAlign18} Format</button>
+              <button class="nf-menu-item" data-menu-id="L2">${iconWorkflow18} Filters</button>
+              <button class="nf-menu-item" data-menu-id="L3">${iconSettings18} Views</button>
             </div>
           </li>
-          <li data-overflow-role="item" data-menuid="L1" data-min-state-width="2.25rem">
+          <li data-overflow-role="item" data-menu-id="L1" data-min-state-width="2.25rem">
             <button class="nf-btn">${iconAlign} Format</button>
           </li>
-          <li data-overflow-role="item" data-menuid="L2" data-min-state-width="2.25rem">
+          <li data-overflow-role="item" data-menu-id="L2" data-min-state-width="2.25rem">
             <button class="nf-btn">${iconWorkflow} Filters</button>
           </li>
-          <li data-overflow-role="item" data-menuid="L3" data-min-state-width="2.25rem">
+          <li data-overflow-role="item" data-menu-id="L3" data-min-state-width="2.25rem">
             <button class="nf-btn">${iconSettings} Views</button>
           </li>
         `}
@@ -224,18 +254,18 @@ export const BothSides: Story = {
           <li data-overflow-role="menu">
             <button class="nf-btn" data-menu-trigger>${iconMore}</button>
             <div class="nf-menu-panel" data-menu-panel>
-              <button class="nf-menu-item" data-menuid="R1">${iconSearch18} Search</button>
-              <button class="nf-menu-item" data-menuid="R2">${iconSettings18} Settings</button>
-              <button class="nf-menu-item" data-menuid="R3">${iconAlign18} Help</button>
+              <button class="nf-menu-item" data-menu-id="R1">${iconSearch18} Search</button>
+              <button class="nf-menu-item" data-menu-id="R2">${iconSettings18} Settings</button>
+              <button class="nf-menu-item" data-menu-id="R3">${iconAlign18} Help</button>
             </div>
           </li>
-          <li data-overflow-role="item" data-menuid="R1" data-min-state-width="2.25rem">
+          <li data-overflow-role="item" data-menu-id="R1" data-min-state-width="2.25rem">
             <button class="nf-btn">${iconSearch} Search</button>
           </li>
-          <li data-overflow-role="item" data-menuid="R2" data-min-state-width="2.25rem">
+          <li data-overflow-role="item" data-menu-id="R2" data-min-state-width="2.25rem">
             <button class="nf-btn">${iconSettings} Settings</button>
           </li>
-          <li data-overflow-role="item" data-menuid="R3" data-min-state-width="2.25rem">
+          <li data-overflow-role="item" data-menu-id="R3" data-min-state-width="2.25rem">
             <button class="nf-btn">${iconAlign} Help</button>
           </li>
         `}
@@ -253,28 +283,28 @@ export const Reverse: Story = {
         <li data-overflow-role="menu">
           <button class="nf-btn" data-menu-trigger>${iconMore}</button>
           <div class="nf-menu-panel" data-menu-panel>
-            <button class="nf-menu-item" data-menuid="btn1">${iconAlign18} Button 1</button>
-            <button class="nf-menu-item" data-menuid="btn2">${iconWorkflow18} Button 2</button>
-            <button class="nf-menu-item" data-menuid="btn3">Button 3</button>
-            <button class="nf-menu-item" data-menuid="btn4">${iconSearch18} Search</button>
-            <button class="nf-menu-item" data-menuid="btn5">${iconSettings18} Settings</button>
+            <button class="nf-menu-item" data-menu-id="btn1">${iconAlign18} Button 1</button>
+            <button class="nf-menu-item" data-menu-id="btn2">${iconWorkflow18} Button 2</button>
+            <button class="nf-menu-item" data-menu-id="btn3">Button 3</button>
+            <button class="nf-menu-item" data-menu-id="btn4">${iconSearch18} Search</button>
+            <button class="nf-menu-item" data-menu-id="btn5">${iconSettings18} Settings</button>
             <div class="nf-separator" role="separator"></div>
             <button class="nf-menu-item">Help</button>
           </div>
         </li>
-        <li data-overflow-role="item" data-menuid="btn1" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn1" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconAlign} Button 1</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn2" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn2" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconWorkflow} Button 2</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn3">
+        <li data-overflow-role="item" data-menu-id="btn3">
           <button class="nf-btn">Button 3</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn4" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn4" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconSearch} Search</button>
         </li>
-        <li data-overflow-role="item" data-menuid="btn5" data-min-state-width="2.25rem">
+        <li data-overflow-role="item" data-menu-id="btn5" data-min-state-width="2.25rem">
           <button class="nf-btn">${iconSettings} Settings</button>
         </li>
       `}

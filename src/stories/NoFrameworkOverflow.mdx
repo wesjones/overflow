@@ -48,16 +48,16 @@ The toolbar is a `<ul>` with `<li>` children. Use `data-` attributes to configur
   <li data-overflow-role="menu">
     <button class="nf-btn" data-menu-trigger>⋯</button>
     <div class="nf-menu-panel" data-menu-panel>
-      <button class="nf-menu-item" data-menuid="format">Format</button>
-      <button class="nf-menu-item" data-menuid="filter">Filters</button>
+      <button class="nf-menu-item" data-menu-id="format">Format</button>
+      <button class="nf-menu-item" data-menu-id="filter">Filters</button>
     </div>
   </li>
 
   <!-- Toolbar items: [data-overflow-role="item"] -->
-  <li data-overflow-role="item" data-menuid="format">
+  <li data-overflow-role="item" data-menu-id="format">
     <button class="nf-btn">Format</button>
   </li>
-  <li data-overflow-role="item" data-menuid="filter">
+  <li data-overflow-role="item" data-menu-id="filter">
     <button class="nf-btn">Filters</button>
   </li>
 </ul>
@@ -87,7 +87,7 @@ Before an item is fully hidden, it can shrink to a fixed width — typically jus
 <Canvas of={NoFrameworkOverflowStories.MinState} />
 
 ```html
-<li data-overflow-role="item" data-menuid="format" data-min-state-width="2.25rem">
+<li data-overflow-role="item" data-menu-id="format" data-min-state-width="2.25rem">
   <button class="nf-btn">
     <svg><!-- icon --></svg>
     Format
@@ -96,6 +96,20 @@ Before an item is fully hidden, it can shrink to a fixed width — typically jus
 ```
 
 When the container is too narrow for the full label but wide enough for the icon, the item enters its **min state** — the text is hidden via `font-size: 0` and the element is constrained to the configured width. The `data-state` attribute changes to `"min"` and the class `overflow-item-min` is applied.
+
+### Snap Mode (Recommended)
+
+When `snap` is enabled, state transitions are synchronized across all items. Instead of items collapsing one at a time, all items with a `data-min-state-width` snap to their min state together, and all hideable items move to the menu together.
+
+**Snap is often the preferred choice for toolbars.** Without snap, items collapse individually — some show only an icon while others still display icon + text. This creates an unintended visual hierarchy where items at the same level of importance appear to have different levels of prominence. With snap, all items stay in the same visual state, preserving the equal importance of each action.
+
+<Canvas of={NoFrameworkOverflowStories.Snap} />
+
+```ts
+new OverflowToolbar(ul, { snap: true });
+```
+
+Min-state snap is driven by CSS using `:has()` — when any item enters `data-state="min"`, a CSS rule cascades the min visual to all `[data-can-min]` items. Hidden-state snap is handled by the overflow engine to keep the menu in sync.
 
 ### Compact Mode
 
@@ -109,14 +123,14 @@ new OverflowToolbar(ul, { compact: true });
 
 ### Menu-Only Items
 
-Items without a `data-menuid` inside `[data-menu-panel]` **always** appear in the menu (useful for Help, About, or dividers). Items without a `data-menuid` outside the menu **always** appear in the toolbar.
+Items without a `data-menu-id` inside `[data-menu-panel]` **always** appear in the menu (useful for Help, About, or dividers). Items without a `data-menu-id` outside the menu **always** appear in the toolbar.
 
 <Canvas of={NoFrameworkOverflowStories.MenuOnly} />
 
 ```html
 <div class="nf-menu-panel" data-menu-panel>
-  <button class="nf-menu-item" data-menuid="format">Format</button>
-  <!-- Always in menu — no data-menuid -->
+  <button class="nf-menu-item" data-menu-id="format">Format</button>
+  <!-- Always in menu — no data-menu-id -->
   <div class="nf-separator" role="separator"></div>
   <button class="nf-menu-item">Help</button>
   <button class="nf-menu-item">About</button>
@@ -127,7 +141,7 @@ When menu-only items exist, the menu opener stays visible even if all linked ite
 
 ### Reverse Mode
 
-Collapses items from the **left** instead of the right. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
+Collapses items from the **right** instead of the left. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
 
 <Canvas of={NoFrameworkOverflowStories.Reverse} />
 
@@ -174,14 +188,14 @@ The popover menu uses the native Popover API with CSS animations via `:popover-o
 |-----------|---------|-------------|
 | `data-overflow-role="item"` | `<li>` | Marks element as a toolbar item |
 | `data-overflow-role="menu"` | `<li>` | Marks element as the menu container |
-| `data-menuid="..."` | `<li>` or menu child | Links toolbar items to menu counterparts |
+| `data-menu-id="..."` | `<li>` or menu child | Links toolbar items to menu counterparts |
 | `data-min-state-width="..."` | `<li>` | CSS width when in min state |
 | `data-menu-trigger` | `<button>` | The menu opener button |
 | `data-menu-panel` | `<div>` | The popover panel |
 
 ### Data Attributes (State)
 
-Each `<li>` with a `data-menuid` receives a `data-state` attribute:
+Each `<li>` with a `data-menu-id` receives a `data-state` attribute:
 
 | Value | Meaning |
 |-------|---------|
@@ -203,6 +217,7 @@ const toolbar = new OverflowToolbar(ul, options?);
 |--------|------|---------|-------------|
 | `compact` | `boolean` | `false` | Collapse items one at a time |
 | `reverse` | `boolean` | `false` | Collapse from the left |
+| `snap` | `boolean` | `false` | Synchronize state transitions across all items |
 
 **Methods:**
 

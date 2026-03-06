@@ -62,7 +62,7 @@ Every overflow toolbar has three parts:
 2. **`MuiOverflowItem`** — each toolbar item
 3. **`MuiOverflowMenu`** — the dropdown that collects hidden items
 
-Items are linked between the toolbar and the menu using a shared **`menuid`**. When a toolbar item overflows, the menu item with the same `menuid` appears in the dropdown.
+Items are linked between the toolbar and the menu using a shared **`menuId`**. When a toolbar item overflows, the menu item with the same `menuId` appears in the dropdown.
 
 ```tsx
 <MuiOverflow sx={{ gap: 1 }}>
@@ -70,21 +70,21 @@ Items are linked between the toolbar and the menu using a shared **`menuid`**. W
   <MuiOverflowMenu
     opener={<Button variant="contained"><MoreHoriz /></Button>}
   >
-    <MuiOverflowItem menuid="format">
+    <MuiOverflowItem menuId="format">
       <MenuItem>Format</MenuItem>
     </MuiOverflowItem>
-    <MuiOverflowItem menuid="filter">
+    <MuiOverflowItem menuId="filter">
       <MenuItem>Filters</MenuItem>
     </MuiOverflowItem>
   </MuiOverflowMenu>
 
   {/* Toolbar items — these are visible when there's enough room */}
-  <MuiOverflowItem menuid="format">
+  <MuiOverflowItem menuId="format">
     <Button variant="contained" sx={{ gap: 1 }}>
       <BlurLinear /> Format
     </Button>
   </MuiOverflowItem>
-  <MuiOverflowItem menuid="filter">
+  <MuiOverflowItem menuId="filter">
     <Button variant="contained" sx={{ gap: 1 }}>
       <Workspaces /> Filters
     </Button>
@@ -104,15 +104,15 @@ The overflow engine scans immediate children for internal role markers to measur
 {/* WRONG — wrapper breaks overflow behavior */}
 <MuiOverflow>
   <Box>
-    <MuiOverflowItem menuid="a"><Button>A</Button></MuiOverflowItem>
-    <MuiOverflowItem menuid="b"><Button>B</Button></MuiOverflowItem>
+    <MuiOverflowItem menuId="a"><Button>A</Button></MuiOverflowItem>
+    <MuiOverflowItem menuId="b"><Button>B</Button></MuiOverflowItem>
   </Box>
 </MuiOverflow>
 
 {/* CORRECT — items are direct children */}
 <MuiOverflow>
-  <MuiOverflowItem menuid="a"><Button>A</Button></MuiOverflowItem>
-  <MuiOverflowItem menuid="b"><Button>B</Button></MuiOverflowItem>
+  <MuiOverflowItem menuId="a"><Button>A</Button></MuiOverflowItem>
+  <MuiOverflowItem menuId="b"><Button>B</Button></MuiOverflowItem>
 </MuiOverflow>
 ```
 
@@ -125,7 +125,7 @@ Before an item is fully hidden, it can shrink to a fixed width — typically jus
 <Canvas of={MuiOverflowStories.MinState} />
 
 ```tsx
-<MuiOverflowItem menuid="format" minStateWidth={5}>
+<MuiOverflowItem menuId="format" minStateWidth={5}>
   <Button variant="contained" sx={{ gap: 1 }}>
     <BlurLinear />
     Format
@@ -137,23 +137,23 @@ Before an item is fully hidden, it can shrink to a fixed width — typically jus
 
 ### Always-Visible Items
 
-Items without a `menuid` that live **outside** the menu always remain visible in the toolbar, regardless of available space. They are never moved to the menu.
+Items without a `menuId` that live **outside** the menu always remain visible in the toolbar, regardless of available space. They are never moved to the menu.
 
 <Canvas of={MuiOverflowStories.AlwaysVisible} />
 
 ```tsx
 <MuiOverflow sx={{ gap: 1 }}>
   <MuiOverflowMenu opener={<Button variant="contained"><MoreHoriz /></Button>}>
-    <MuiOverflowItem menuid="format">
+    <MuiOverflowItem menuId="format">
       <MenuItem>Format</MenuItem>
     </MuiOverflowItem>
   </MuiOverflowMenu>
 
-  <MuiOverflowItem menuid="format">
+  <MuiOverflowItem menuId="format">
     <Button variant="contained">Format</Button>
   </MuiOverflowItem>
 
-  {/* No menuid — always visible in toolbar */}
+  {/* No menuId — always visible in toolbar */}
   <MuiOverflowItem>
     <Button variant="contained"><Search /> Search</Button>
   </MuiOverflowItem>
@@ -162,6 +162,42 @@ Items without a `menuid` that live **outside** the menu always remain visible in
   </MuiOverflowItem>
 </MuiOverflow>
 ```
+
+### Snap Mode (Recommended)
+
+When `snap` is enabled, state transitions are synchronized across all items. Instead of items collapsing one at a time, all items with a `minStateWidth` snap to their min state together, and all hideable items move to the menu together.
+
+**Snap is often the preferred choice for toolbars.** Without snap, items collapse individually — some show only an icon while others still display icon + text. This creates an unintended visual hierarchy where items at the same level of importance appear to have different levels of prominence. With snap, all items stay in the same visual state, preserving the equal importance of each action.
+
+<Canvas of={MuiOverflowStories.Snap} />
+
+```tsx
+<MuiOverflow snap sx={{ gap: 1 }}>
+  <MuiOverflowMenu
+    opener={<Button variant="contained"><MoreHoriz /></Button>}
+  >
+    <MuiOverflowItem menuId="format">
+      <MenuItem>Format</MenuItem>
+    </MuiOverflowItem>
+    <MuiOverflowItem menuId="filter">
+      <MenuItem>Filters</MenuItem>
+    </MuiOverflowItem>
+  </MuiOverflowMenu>
+
+  <MuiOverflowItem menuId="format" minStateWidth={5}>
+    <Button variant="contained" sx={{ gap: 1 }}>
+      <BlurLinear /> Format
+    </Button>
+  </MuiOverflowItem>
+  <MuiOverflowItem menuId="filter" minStateWidth={5}>
+    <Button variant="contained" sx={{ gap: 1 }}>
+      <Workspaces /> Filters
+    </Button>
+  </MuiOverflowItem>
+</MuiOverflow>
+```
+
+Min-state snap is driven by CSS using `:has()` — when any item enters `data-state="min"`, a CSS rule cascades the min visual to all `[data-can-min]` items. Hidden-state snap is handled by the overflow engine to keep the menu in sync.
 
 ### Compact Mode
 
@@ -177,7 +213,7 @@ By default, all items collapse at the same breakpoint. With `compact`, items col
 
 ### Menu-Only Items
 
-Items without a `menuid` that live **inside** `MuiOverflowMenu` always appear in the menu. This is useful for items like Help, About, or dividers that should always be accessible from the dropdown.
+Items without a `menuId` that live **inside** `MuiOverflowMenu` always appear in the menu. This is useful for items like Help, About, or dividers that should always be accessible from the dropdown.
 
 <Canvas of={MuiOverflowStories.MenuOnly} />
 
@@ -185,11 +221,11 @@ Items without a `menuid` that live **inside** `MuiOverflowMenu` always appear in
 <MuiOverflowMenu
   opener={<Button variant="contained"><MoreHoriz /></Button>}
 >
-  <MuiOverflowItem menuid="format">
+  <MuiOverflowItem menuId="format">
     <MenuItem>Format</MenuItem>
   </MuiOverflowItem>
 
-  {/* Always in menu — no menuid */}
+  {/* Always in menu — no menuId */}
   <MuiOverflowItem>
     <Divider />
   </MuiOverflowItem>
@@ -206,7 +242,7 @@ When menu-only items exist, the menu opener button stays visible even if all lin
 
 ### Reverse Mode
 
-Collapses items from the **left** instead of the right. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
+Collapses items from the **right** instead of the left. Useful for right-aligned toolbars where you want the rightmost items to remain visible longest.
 
 <Canvas of={MuiOverflowStories.Reverse} />
 
@@ -268,7 +304,7 @@ Set `minWidth: 0` on each via `sx` so they share space equally via flexbox.
 <MuiOverflowMenu
   opener={<IconButton><MoreHoriz /></IconButton>}
 >
-  <MuiOverflowItem menuid="format">
+  <MuiOverflowItem menuId="format">
     <MenuItem>
       <ListItemIcon><BlurLinear /></ListItemIcon>
       Format
@@ -279,7 +315,7 @@ Set `minWidth: 0` on each via `sx` so they share space equally via flexbox.
 
 ### Data Attributes
 
-Each `MuiOverflowItem` with a `menuid` renders a `<li>` with a `data-state` attribute:
+Each `MuiOverflowItem` with a `menuId` renders a `<li>` with a `data-state` attribute:
 
 | Value | Meaning |
 |-------|---------|
@@ -290,7 +326,7 @@ Each `MuiOverflowItem` with a `menuid` renders a `<li>` with a `data-state` attr
 You can target these with MUI's `sx` prop or regular CSS:
 
 ```tsx
-<MuiOverflowItem menuid="format" minStateWidth={5}>
+<MuiOverflowItem menuId="format" minStateWidth={5}>
   <Button
     variant="contained"
     sx={{
@@ -314,6 +350,7 @@ You can target these with MUI's `sx` prop or regular CSS:
 | `children` | `ReactNode` | — | Overflow items and menu |
 | `compact` | `boolean` | `false` | Collapse items one at a time |
 | `reverse` | `boolean` | `false` | Collapse from the left |
+| `snap` | `boolean` | `false` | Synchronize state transitions across all items |
 | `sx` | `SxProps<Theme>` | — | MUI system props |
 | `className` | `string` | — | Additional CSS class |
 | `style` | `CSSProperties` | — | Inline styles |
@@ -323,7 +360,7 @@ You can target these with MUI's `sx` prop or regular CSS:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | — | Item content |
-| `menuid` | `string` | — | Links toolbar and menu items. Omit for always-visible or menu-only items. |
+| `menuId` | `string` | — | Links toolbar and menu items. Omit for always-visible or menu-only items. |
 | `minStateWidth` | `number` | — | Theme spacing units for min state width (e.g. `5` = `theme.spacing(5)`) |
 
 ### `MuiOverflowMenu`
@@ -347,7 +384,7 @@ const [menuOpen, setMenuOpen] = useState(false);
   open={menuOpen}
   onOpenChange={setMenuOpen}
 >
-  <MuiOverflowItem menuid="format">
+  <MuiOverflowItem menuId="format">
     <MenuItem>Format</MenuItem>
   </MuiOverflowItem>
 </MuiOverflowMenu>

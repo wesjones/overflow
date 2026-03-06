@@ -86,7 +86,8 @@
 }
 
 .overflow-item-min,
-.overflow-opener {
+.overflow-opener,
+.overflow-snap:has(> [data-state="min"]) > [data-can-min]:not([data-state="min"]):not([data-state="hidden"]) {
   > button {
     font-size: 0; /* hide the text */
     min-width: 100%;
@@ -96,4 +97,10 @@
     justify-content: center;
     gap: 0;
   }
+}
+
+/* Snap: cascade min state to all min-eligible items */
+.overflow-snap:has(> [data-state="min"]) > [data-can-min]:not([data-state="min"]):not([data-state="hidden"]) {
+  max-width: var(--min-state-width, 2.25rem);
+  overflow: hidden;
 }

@@ -4,19 +4,20 @@ import { OverflowItem } from '../Overflow';
 
 interface MuiOverflowItemProps {
   children: ReactNode;
-  menuid?: string;
+  menuId?: string;
   minStateWidth?: number;
 }
 
-function MuiOverflowItem({ children, menuid, minStateWidth }: MuiOverflowItemProps) {
+function MuiOverflowItem({ children, menuId, minStateWidth }: MuiOverflowItemProps) {
   const theme = useTheme();
   const cssWidth = minStateWidth !== undefined ? theme.spacing(minStateWidth) : undefined;
 
   return (
-    <OverflowItem menuid={menuid} minStateWidth={cssWidth}>
+    <OverflowItem menuId={menuId} minStateWidth={cssWidth}>
       {children}
     </OverflowItem>
   );
 }
 
-export default Object.assign(MuiOverflowItem, { overflowRole: 'item' as const });
+MuiOverflowItem.overflowRole = 'item' as const;
+export default MuiOverflowItem;

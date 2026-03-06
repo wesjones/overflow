@@ -43,29 +43,29 @@ export const Default: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="btn1">
+          <MuiOverflowItem menuId="btn1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn2">
+          <MuiOverflowItem menuId="btn2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn3">
+          <MuiOverflowItem menuId="btn3">
             <MenuItem>Button 3</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="btn1">
+        <MuiOverflowItem menuId="btn1">
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Button 1
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn2">
+        <MuiOverflowItem menuId="btn2">
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Button 2
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn3">
+        <MuiOverflowItem menuId="btn3">
           <Button variant="contained">Button 3</Button>
         </MuiOverflowItem>
       </>
@@ -85,20 +85,20 @@ export const AlwaysVisible: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="btn1">
+          <MuiOverflowItem menuId="btn1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn2">
+          <MuiOverflowItem menuId="btn2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="btn1">
+        <MuiOverflowItem menuId="btn1">
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Button 1
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn2">
+        <MuiOverflowItem menuId="btn2">
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Button 2
@@ -133,10 +133,10 @@ export const MenuOnly: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="btn1">
+          <MuiOverflowItem menuId="btn1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn2">
+          <MuiOverflowItem menuId="btn2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem>
@@ -149,13 +149,13 @@ export const MenuOnly: Story = {
             <MenuItem>About</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="btn1">
+        <MuiOverflowItem menuId="btn1">
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Button 1
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn2">
+        <MuiOverflowItem menuId="btn2">
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Button 2
@@ -184,29 +184,75 @@ export const MinState: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="btn1">
+          <MuiOverflowItem menuId="btn1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn2">
+          <MuiOverflowItem menuId="btn2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn3">
+          <MuiOverflowItem menuId="btn3">
             <MenuItem sx={{ gap: 1 }}><Settings /> Button 3</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="btn1" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn1" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Button 1
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn2" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn2" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Button 2
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn3" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn3" minStateWidth={5}>
+          <Button variant="contained" sx={{ gap: 1 }}>
+            <Settings />
+            Button 3
+          </Button>
+        </MuiOverflowItem>
+      </>
+    ),
+  },
+};
+
+export const Snap: Story = {
+  args: {
+    snap: true,
+    sx: { gap: 1 },
+    children: (
+      <>
+        <MuiOverflowMenu
+          opener={
+            <Button variant="contained">
+              <MoreHoriz />
+            </Button>
+          }
+        >
+          <MuiOverflowItem menuId="btn1">
+            <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
+          </MuiOverflowItem>
+          <MuiOverflowItem menuId="btn2">
+            <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
+          </MuiOverflowItem>
+          <MuiOverflowItem menuId="btn3">
+            <MenuItem sx={{ gap: 1 }}><Settings /> Button 3</MenuItem>
+          </MuiOverflowItem>
+        </MuiOverflowMenu>
+        <MuiOverflowItem menuId="btn1" minStateWidth={5}>
+          <Button variant="contained" sx={{ gap: 1 }}>
+            <BlurLinear />
+            Button 1
+          </Button>
+        </MuiOverflowItem>
+        <MuiOverflowItem menuId="btn2" minStateWidth={5}>
+          <Button variant="contained" sx={{ gap: 1 }}>
+            <Workspaces />
+            Button 2
+          </Button>
+        </MuiOverflowItem>
+        <MuiOverflowItem menuId="btn3" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Settings />
             Button 3
@@ -229,19 +275,19 @@ export const Compact: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="btn1">
+          <MuiOverflowItem menuId="btn1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn2">
+          <MuiOverflowItem menuId="btn2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn3">
+          <MuiOverflowItem menuId="btn3">
             <MenuItem>Button 3</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn4">
+          <MuiOverflowItem menuId="btn4">
             <MenuItem sx={{ gap: 1 }}><Search /> Search</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn5">
+          <MuiOverflowItem menuId="btn5">
             <MenuItem sx={{ gap: 1 }}><Settings /> Settings</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem>
@@ -251,28 +297,28 @@ export const Compact: Story = {
             <MenuItem>Help</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="btn1" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn1" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Button 1
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn2" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn2" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Button 2
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn3">
+        <MuiOverflowItem menuId="btn3">
           <Button variant="contained">Button 3</Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn4" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn4" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Search />
             Search
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn5" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn5" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Settings />
             Settings
@@ -294,29 +340,29 @@ export const BothSides: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="L1">
+          <MuiOverflowItem menuId="L1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Format</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="L2">
+          <MuiOverflowItem menuId="L2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Filters</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="L3">
+          <MuiOverflowItem menuId="L3">
             <MenuItem sx={{ gap: 1 }}><Settings /> Views</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="L1" minStateWidth={5}>
+        <MuiOverflowItem menuId="L1" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Format
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="L2" minStateWidth={5}>
+        <MuiOverflowItem menuId="L2" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Filters
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="L3" minStateWidth={5}>
+        <MuiOverflowItem menuId="L3" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Settings />
             Views
@@ -332,29 +378,29 @@ export const BothSides: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="R1">
+          <MuiOverflowItem menuId="R1">
             <MenuItem sx={{ gap: 1 }}><Search /> Search</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="R2">
+          <MuiOverflowItem menuId="R2">
             <MenuItem sx={{ gap: 1 }}><Settings /> Settings</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="R3">
+          <MuiOverflowItem menuId="R3">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Help</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="R1" minStateWidth={5}>
+        <MuiOverflowItem menuId="R1" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Search />
             Search
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="R2" minStateWidth={5}>
+        <MuiOverflowItem menuId="R2" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Settings />
             Settings
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="R3" minStateWidth={5}>
+        <MuiOverflowItem menuId="R3" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Help
@@ -378,19 +424,19 @@ export const Reverse: Story = {
             </Button>
           }
         >
-          <MuiOverflowItem menuid="btn1">
+          <MuiOverflowItem menuId="btn1">
             <MenuItem sx={{ gap: 1 }}><BlurLinear /> Button 1</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn2">
+          <MuiOverflowItem menuId="btn2">
             <MenuItem sx={{ gap: 1 }}><Workspaces /> Button 2</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn3">
+          <MuiOverflowItem menuId="btn3">
             <MenuItem>Button 3</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn4">
+          <MuiOverflowItem menuId="btn4">
             <MenuItem sx={{ gap: 1 }}><Search /> Search</MenuItem>
           </MuiOverflowItem>
-          <MuiOverflowItem menuid="btn5">
+          <MuiOverflowItem menuId="btn5">
             <MenuItem sx={{ gap: 1 }}><Settings /> Settings</MenuItem>
           </MuiOverflowItem>
           <MuiOverflowItem>
@@ -400,28 +446,28 @@ export const Reverse: Story = {
             <MenuItem>Help</MenuItem>
           </MuiOverflowItem>
         </MuiOverflowMenu>
-        <MuiOverflowItem menuid="btn1" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn1" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <BlurLinear />
             Button 1
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn2" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn2" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Workspaces />
             Button 2
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn3">
+        <MuiOverflowItem menuId="btn3">
           <Button variant="contained">Button 3</Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn4" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn4" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Search />
             Search
           </Button>
         </MuiOverflowItem>
-        <MuiOverflowItem menuid="btn5" minStateWidth={5}>
+        <MuiOverflowItem menuId="btn5" minStateWidth={5}>
           <Button variant="contained" sx={{ gap: 1 }}>
             <Settings />
             Settings
