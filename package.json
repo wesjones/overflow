@@ -1,6 +1,6 @@
 {
   "name": "overflow-toolbar",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Responsive toolbar overflow component — items automatically collapse into a dropdown menu as the container shrinks. Supports visible, icon-only (min), and hidden states. Ships with React (Radix UI), MUI, and vanilla JS implementations.",
   "license": "MIT",
