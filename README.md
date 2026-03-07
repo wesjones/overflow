@@ -306,7 +306,7 @@ pnpm lint           # lint
 
 ## Also Known As
 
-This component implements what is commonly known as a responsive toolbar, overflow menu, adaptive toolbar, collapsible toolbar, priority+ pattern, priority-plus navigation, toolbar button group overflow, responsive action bar, command bar, or "more menu." It handles responsive buttons, auto-collapse, icon-only collapse, and dynamic toolbar resizing using ResizeObserver. The Radix UI variant is fully compatible with shadcn/ui projects.
+This component implements what is commonly known as a responsive toolbar, overflow menu, adaptive toolbar, collapsible toolbar, priority+ pattern, priority-plus navigation, toolbar button group overflow, responsive action bar, action bar, action buttons, overflow actions, button rollup, button rollbar, command bar, or "more menu." It handles responsive buttons, auto-collapse, icon-only collapse, and dynamic toolbar resizing using ResizeObserver. The Radix UI variant is fully compatible with shadcn/ui projects.
 
 ## License
 
