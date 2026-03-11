@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlignLeft, Search, Settings, Workflow } from 'lucide-react';
+import { RxOverflow, RxOverflowItem, RxOverflowMenu } from '../components/RxOverflow';
+import "../components/RxOverflow/rx.css";
 
 
 const MoreDots = ({ size = 24 }: { size?: number }) => (
@@ -9,7 +11,6 @@ const MoreDots = ({ size = 24 }: { size?: number }) => (
     <circle cx="19" cy="12" r="2.5" />
   </svg>
 );
-import { RxOverflow, RxOverflowItem, RxOverflowMenu } from '../components/RxOverflow';
 
 const meta: Meta<typeof RxOverflow> = {
   title: 'Components/RxOverflow',
